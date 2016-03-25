@@ -1,8 +1,7 @@
 = Gradle Test Plugin
 :latestRevision: 1.0.0
-:sectnums:
-
 :toc:
+:sectnums:
 
 == Summary
 This Gradle plugin provides a test plugin for Gradle plugin builds. It contains some helper classes, methods and a
