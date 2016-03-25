@@ -1,0 +1,73 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+}
+
+plugins {
+    // project plugins
+    id 'java-gradle-plugin'
+    id 'groovy'
+    // test coverage
+    id 'jacoco'
+
+    // ide plugin
+    id 'idea'
+
+    // plugin for documentation
+    id 'org.asciidoctor.convert' version '1.5.3'
+
+    // publish plugin
+    id 'maven-publish'
+}
+
+group 'com.intershop.gradle.test'
+description 'Gradle test plugin - test extension for Gradle plugin builds'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+test {
+    // Gradle versions for test
+    systemProperty 'intershop.gradle.versions', '2.8,2.9,2.10,2.11'
+}
+
+// This is a workaround and can be removed, when Gradle supports this.
+// Write the plugin's classpath to a file to share with the tests
+task createClasspathManifest {
+    def outputDir = file("$buildDir/$name")
+
+    inputs.files sourceSets.main.runtimeClasspath
+    outputs.dir outputDir
+
+    doLast {
+        outputDir.mkdirs()
+
+        // this is necessary because we want test all with the jar
+        Set<File> classpathFiles = sourceSets.main.runtimeClasspath.getFiles()
+        classpathFiles.remove(sourceSets.main.output.classesDir)
+        classpathFiles.remove(sourceSets.main.output.resourcesDir)
+
+        Task task = tasks.findByName(sourceSets.main.jarTaskName)
+        task.getOutputs().files.each {File f ->
+            classpathFiles.add(f)
+        }
+        file("$outputDir/plugin-classpath.txt").text = classpathFiles.join("\n")
+    }
+}
+
+// this is necessary because we want test all with the jar
+test.dependsOn jar
+
+dependencies {
+    compile('org.spockframework:spock-core:1.0-groovy-2.4'){
+        exclude group: 'org.codehaus.groovy'
+    }
+
+    compile gradleTestKit()
+    testRuntime files(createClasspathManifest)
+}
+
+repositories {
+    jcenter()
+}

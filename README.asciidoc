@@ -1,0 +1,247 @@
+= Gradle Test Plugin
+:latestRevision: 1.0.0
+:sectnums:
+
+:toc:
+
+== Summary
+This Gradle plugin provides a test plugin for Gradle plugin builds. It contains some helper classes, methods and a
+Spock extension 'TestDir' for test directories. Furthermore it contains the necessary helper tasks and test extension
+for the Gradle TestKit (see https://docs.gradle.org/current/userguide/test_kit.html).
+
+== Usage
+To use the Gradle test plugin, include the following in your build script:
+
+[source,groovy,subs="attributes"]
+----
+apply plugin: 'com.intershop.gradle.test'
+
+buildscript {
+    dependencies {
+        classpath 'com.intershop.gradle.test:test-gradle-plugin:{latestRevision}'
+    }
+}
+----
+
+=== Task 'createClasspathManifest'
+This task creates a file `'plugin-classpath.txt'` with paths of all test runtime dependencies in `'<buildDir>/createClasspathManifest'`.
+The task is added to the test runtime dependency configuration and runs before a test will be started.
+The output file is used for the creation of the classpath for integration tests.
+
+=== Basic Test Classes
+This plugin provides some basic test classes for integration and basic plugin tests. Therefore, it is necessary to add
+this library also to the test dependency configuration.
+
+==== Abstract Integration Test
+
+With `com.intershop.gradle.test.AbstractIntegrationSpec` it is necessary to extend your integration test:
+
+[source,groovy,subs="attributes"]
+----
+import com.intershop.gradle.test.AbstractIntegrationSpec
+
+class IntegrationTestSpec extends AbstractIntegrationSpec {
+...
+}
+----
+
+AbstractIntegrationTest extends spock.lang.Specification.
+
+This abstract class comes with some helper methodes, the definition of a project folder, the base definition of the build
+file and the classpath for GradleRunner (see https://docs.gradle.org/current/userguide/test_kit.html):
+
+[cols="17%,17%,17%,49%", width="95%", options="header"]
+|===
+|Variable         | Type        | Default Value                                           | Description
+
+|*testProjectDir* |`File`       | <buildDir>/test-working/<spec name>/<test method name>  | The base directory of the test project. (spaces are replaced with a dash)
+|*buildFile*      |`File`       | <testProjectDir>/build.gradle                           | The build file of the test project.
+|*pluginClasspath*|`List<File>` | <list of all runtime dependency files>                  | List of all runtime dependency files prepared by 'createClasspathManifest' task.
+|===
+
+[cols="17%,17%,20%,45%", width="95%", options="header"]
+|===
+|Methods                 | Type  | Parameters | Description
+
+|*getPreparedGradleRunner* | `GradleRunner` | | Returns a GradleRunner created with base project dir (testProjectDir) and the classpath (pluginClasspath).
+|*getSupportedGradleVersions* | List<String> | | Returns a list of strings created from the system property 'intershop.gradle.versions'.
+
+|*writeJavaTestClass*       |`File` | String packageDotted +
+File baseDir = testProjectDir | Creates a "Hello World" Java source file in the standard source directory (`src/main/java`) +
+                                with the specified package. Without a specified baseDir parameter it creates the source file +
+                                for a single Java Gradle project. It returns the source file self.
+
+|*writeGroovyTestClass* |`File` | String packageDotted +
+File baseDir = testProjectDir | Creates a "Hello World" Groovy source file in the standard source directory (`src/main/groovy`) +
+                                with the specified package. Without a specified baseDir parameter it creates the source file +
+                                for a single Groovy Gradle project. It returns the source file self.
+|*createSubProject* |`File`| String projectPath +
+File settingsGradle +
+def buildFileContent | Creates a subproject with path, eg. 'test1:test2'. The return value contains the directory of the subproject.
+|*writeJavaTestClassTest*   |`File` | String packageDotted +
+boolean failTest = false +
+File baseDir = testProjectDir | Creates a "Hello World Test" Java source file in the standard source directory (`src/test/java`) +
+                                with the specified package. Without a specified baseDir parameter it creates the source file for +
+                                a single Java Gradle project. Per default the test finished successful, if you set failTest to true +
+                                the test will fail. It returns the source file self.
+|*writeGroovyTestClassSpec*   |`File` | String packageDotted +
+boolean failTest = false +
+File baseDir = testProjectDir | Creates a "Hello World Spec" Groovy test spec in the standard source directory (`src/test/groovy`) +
+                                with the specified package. Without a specified baseDir parameter it creates the source file for a +
+                                single Java Gradle project. Per default the test finished successful, if you set failTest to true +
+                                the test will fail. It returns the source file self. +
+                                It is necessery to specify dependencies for the build file!
+|*file*                  |`File` | String path +
+File baseDir = testProjectDir | Creates a file on the specified path in the base project dir. Without a specified baseDir parameter +
+                                it creates the file with the specified path in a single project dir.
+|*directory*             |`File` | String path +
+File baseDir = testProjectDir | Creates a directory on the specified path in the base project dir. Without a specified baseDir +
+                                parameter it creates the directory with the specified path in a single project dir.
+|*copyResources*         |`void` | String srcDir +
+String target = '' +
+File baseDir = testProjectDir | Copies directories with files from test resources.
+|===
+
+[source,groovy,subs="attributes"]
+.example.groovy
+----
+package com.package.test
+
+import com.intershop.gradle.test.AbstractIntegrationSpec
+import org.gradle.testkit.runner.GradleRunner
+import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
+
+class IntegrationPluginSpec extends AbstractIntegrationSpec {
+
+    def 'test description'() {
+        given:
+        writeJavaTestClass('com.test.package.test')
+        writeJavaTestClassTest('com.test.package.test')
+
+        buildFile &lt;&lt; """
+            plugins {
+                id 'java'
+            }
+
+            group = 'com.test'
+            version = '1.0.0.0'
+
+            sourceCompatibility = 1.7
+            targetCompatibility = 1.7
+
+            dependencies {
+                testCompile 'junit:junit:4.12'
+            }
+
+            repositories {
+                jcenter()
+            }
+        """.stripIndent()
+
+        when:
+        def result = preparedGradleRunner
+                .withArguments('test', '--stacktrace', '-i')
+                .withGradleVersion(gradleVersion)
+                .build()
+
+        then:
+        result.task(':test').outcome == SUCCESS
+
+        where:
+        gradleVersion &lt;&lt; supportedGradleVersions
+    }
+----
+
+For the use of the method 'supportedGradleVersions' it is necessary to specify the system property 'intershop.gradle.versions':
+
+[source,groovy,subs="attributes"]
+.build.gradle
+----
+...
+
+test {
+    // Gradle versions for test
+    systemProperty 'intershop.gradle.versions', '2.8,2.9'
+}
+
+...
+----
+
+==== Basic Project Plugin Test
+
+Basic plugin tests are integrated in com.intershop.gradle.test.AbstractProjectSpec. This class should be
+used as a base class for more and extended plugin tests.
+
+[source,groovy,subs="attributes"]
+----
+import com.intershop.gradle.test.AbstractProjectSpec
+
+class ProjectTestSpec extends AbstractProjectSpec {
+
+    @Override
+    Plugin getPlugin() {
+        return new 'Plugin Class'()
+    }
+
+...
+}
+----
+
+AbstractProjectSpec extends spock.lang.Specification.
+
+This abstract class adds some special tests for plugins:
+
+[cols="100%", width="70%", options="header"]
+|===
+|Test
+|`'apply does not throw exceptions'`
+|`'apply is idempotent'`
+|`'apply is fine on all levels of multiproject'`
+|`'apply to multiple subprojects'`
+|===
+
+The class provides the following variables:
+
+[cols="17%,17%,17%,49%", width="100%, options="header"]
+|===
+|Variable         | Type                      | Default Value                                           | Description
+
+|*testProjectDir* |`File`                     | <buildDir>/test-working/<spec name>/<test method name>  | The base directory of the test project. (spaces are replaced with a dash)
+|*testName*       |`org.junit.rules.TestName` |                                                         | The test name.
+|*canonicalName*  |`String`                   | <test method name>                                      | The test name without spaces. (spaces are replaced with a dash)
+|*project*        |`Project`                  | <project with canonicalName and testProjectDir>         | The test root project.
+|===
+
+This class is a fork from Netflix nebula-test extension.
+
+=== Test Directory Spock Extension @TestDir
+
+Used on a File property of a spec class this annotation will cause a temporary directory to be created and injected for the spec before the first feature method is run.
+The directory will be deleted if exists before it is created again for the spec.
+
+The baseDir is without any special configuration taken from the test system property `'intershop.test.base.dir'`. The default root path is `'build/test-working'`.
+
+[cols="17%,17%,17%,49%", width="95%", options="header"]
+|===
+| Methods | Type | Default Value |
+
+| *baseDir*          | `String`  | ''     | Base dir of the directory.
+| *clean*            | `boolean` | `true` | Delete directory before test starts.
+| *overwrite*        | `boolean` | `false`| If clean is false, and this value is also false the folder will be extended with a number.
+| *useTempDirAsBase* | `boolean` | `false`| Instead of `'intershop.test.base.dir'` the value of `'java.io.tmpdir'` is used for the base dir.
+| *large*            | `boolean` | `false`| If set the test directory is expected to be large and is cleaned using OS commands. *ATTENTION: This does not work for long directories on Windows.*
+|===
+
+== Java Doc
+
+For more information please check the provided Java doc.
+
+== License
+
+Copyright 2014-2016 Intershop Communications.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
