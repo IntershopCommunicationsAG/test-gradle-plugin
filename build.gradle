@@ -30,6 +30,7 @@ plugins {
 
 group 'com.intershop.gradle.test'
 description 'Gradle test plugin - test extension for Gradle plugin builds'
+version = '1.0.0'
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
@@ -219,7 +220,6 @@ pluginBundle {
         gradleTestPlugin {
             id = 'com.intershop.gradle.test'
             displayName = 'Gradle Test Plugin'
-            version = '1.0.0'
         }
     }
 }
