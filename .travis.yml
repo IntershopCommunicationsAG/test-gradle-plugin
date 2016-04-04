@@ -7,7 +7,7 @@ cache:
   - "$HOME/.gradle/caches/"
 install:
   - ./gradlew assemble
-before_script
+before_script:
   - echo -e "gradle.publish.key=$APIKEY\ngradle.publish.secret=$APISECRET" > gradle.properties
 scipt:
   - ./gradlew jacocoTestReport build publish bintrayUpload

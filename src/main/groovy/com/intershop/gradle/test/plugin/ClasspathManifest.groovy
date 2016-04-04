@@ -21,6 +21,9 @@ import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 
+/**
+ * Creates a file with all dependencies of the plugin classpath
+ */
 class ClasspathManifest extends DefaultTask {
 
     @InputFiles

@@ -22,6 +22,7 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Rule
 import org.junit.rules.TestName
 import spock.lang.Specification
+
 /**
  * Create some basic tests that all plugins should pass
  */

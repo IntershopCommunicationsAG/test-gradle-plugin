@@ -19,6 +19,13 @@ plugins {
 
     // publish plugin
     id 'maven-publish'
+
+    // plugin for publishing to Bintray / jcenter
+    id 'com.jfrog.bintray' version '1.6'
+
+    // plugin for publishing to Gradle Portal
+    id "com.gradle.plugin-publish" version "0.9.4"
+
 }
 
 group 'com.intershop.gradle.test'
@@ -27,9 +34,121 @@ description 'Gradle test plugin - test extension for Gradle plugin builds'
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
+// set correct project status
+if (project.version.endsWith('-SNAPSHOT')) {
+    status = 'snapshot'
+}
+
+task copyAsciiDoc {
+    def outputDir = file("$buildDir/tmp/asciidoctorSrc")
+    def inputFiles = fileTree(dir: rootDir, include: '**/*.asciidoc')
+
+    inputs.files inputFiles
+    outputs.dir outputDir
+
+    doLast {
+        outputDir.mkdirs()
+
+        copy {
+            from inputFiles
+            into outputDir
+        }
+    }
+}
+
+asciidoctorj {
+    noDefaultRepositories = true
+}
+
+asciidoctor {
+    sourceDir "${buildDir}/tmp/asciidoctorSrc"
+    sources {
+        include 'README.asciidoc'
+    }
+
+    backends 'html5', 'docbook'
+    options doctype : 'article',
+            ruby    : 'erubis'
+    attributes  'latestRevision'     : project.version,
+            'toc':'left',
+            'toclevels':'2',
+            'source-highlighter' : 'coderay',
+            'icons': 'font',
+            'setanchors':'true',
+            'idprefix':'asciidoc_',
+            'idseparator':'-',
+            'docinfo1':'true'
+}
+
+asciidoctor.dependsOn copyAsciiDoc
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true // coveralls plugin depends on xml format report
+        html.enabled = true
+    }
+}
+
+task groovydocJar(type: Jar) {
+    dependsOn groovydoc
+    classifier = 'javadoc'
+    from groovydoc.destinationDir
+}
+
+// additional sources artifact
+task sourceJar(type: Jar) {
+    from sourceSets.main.allSource
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+
+            artifact sourceJar {
+                classifier 'sources'
+            }
+
+            artifact groovydocJar {
+                classifier "javadoc"
+            }
+
+            artifact(new File(buildDir, 'asciidoc/html5/README.html')) {
+                classifier 'reference'
+            }
+
+            artifact(new File(buildDir, 'asciidoc/docbook/README.xml')) {
+                classifier = 'docbook'
+            }
+
+            pom.withXml {
+                def Node root = asNode();
+                root.appendNode('name', project.name)
+                root.appendNode('description', project.description)
+                root.appendNode('url', "https:/gitlab.intershop.de/IntershopGradlePlugins/${project.name}")
+
+                def scm = root.appendNode( 'scm' )
+                scm.appendNode( 'url', "https://gitlab.intershop.de/IntershopGradlePlugins/${project.name}")
+                scm.appendNode( 'connection', "scm:git:https://gitlab.intershop.de/IntershopGradlePlugins/${project.name}.git")
+
+                def org = root.appendNode( 'organization' )
+                org.appendNode( 'name', 'Intershop Communications' )
+                org.appendNode( 'url', 'http://intershop.com' )
+
+                def license = root.appendNode( 'licenses' ).appendNode( 'license' );
+                license.appendNode( 'name', 'Apache License, Version 2.0' )
+                license.appendNode( 'url', 'http://www.apache.org/licenses/LICENSE-2.0' )
+                license.appendNode( 'distribution', 'repo' )
+            }
+        }
+    }
+}
+
+publish.dependsOn asciidoctor
+
 test {
     // Gradle versions for test
-    systemProperty 'intershop.gradle.versions', '2.8,2.9,2.10,2.11'
+    systemProperty 'intershop.gradle.versions', '2.10,2.11'
 }
 
 // This is a workaround and can be removed, when Gradle supports this.
@@ -58,6 +177,51 @@ task createClasspathManifest {
 
 // this is necessary because we want test all with the jar
 test.dependsOn jar
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    pkg {
+        repo = 'maven'
+        name = project.name
+        userOrg = 'intershopcommunicationsag'
+
+        licenses = ['Apache-2.0']
+        vcsUrl = "https://github.com/IntershopCommunicationsAG/${project.name}"
+
+        desc = project.description
+        websiteUrl = "https://github.com/IntershopCommunicationsAG/${project.name}"
+        issueTrackerUrl = "https://github.com/IntershopCommunicationsAG/${project.name}/issues"
+
+        labels = ['intershop', 'gradle', 'plugin', 'test']
+        publicDownloadNumbers = true
+
+        version {
+            name = project.version
+            desc = "${project.description} ${project.version}"
+            released  = new Date()
+            vcsTag = project.version
+        }
+
+        publications = ['intershopMvn']
+    }
+}
+
+bintrayUpload.dependsOn asciidoctor
+
+pluginBundle {
+    website = "https://github.com/IntershopCommunicationsAG/${project.name}"
+    vcsUrl = "https://github.com/IntershopCommunicationsAG/${project.name}"
+    description = project.description
+    tags = ['intershop', 'gradle', 'plugin', 'test']
+
+    plugins {
+        greetingsPlugin {
+            id = 'com.intershop.gradle.test'
+            displayName = 'Gradle Test Plugin'
+        }
+    }
+}
 
 dependencies {
     compile('org.spockframework:spock-core:1.0-groovy-2.4'){
