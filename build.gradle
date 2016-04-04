@@ -216,9 +216,10 @@ pluginBundle {
     tags = ['intershop', 'gradle', 'plugin', 'test']
 
     plugins {
-        greetingsPlugin {
+        gradleTestPlugin {
             id = 'com.intershop.gradle.test'
             displayName = 'Gradle Test Plugin'
+            version = '1.0.0'
         }
     }
 }
