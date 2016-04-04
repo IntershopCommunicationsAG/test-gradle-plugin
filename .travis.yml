@@ -10,7 +10,7 @@ install:
 before_script:
   - echo -e "gradle.publish.key=$APIKEY\ngradle.publish.secret=$APISECRET" > gradle.properties
 scipt:
-  - ./gradlew test jacocoTestReport build publish bintrayUpload
+  - ./gradlew test jacocoTestReport build publishPlugins bintrayUpload
 notifications:
   webhooks:
     urls:
