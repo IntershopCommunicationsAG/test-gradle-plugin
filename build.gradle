@@ -88,8 +88,6 @@ publishing {
     }
 }
 
-publish.dependsOn asciidoctor
-
 test {
     // Gradle versions for test
     systemProperty 'intershop.gradle.versions', '2.10,2.11'
