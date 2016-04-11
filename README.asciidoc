@@ -1,6 +1,7 @@
 = Gradle Test Plugin
 :latestRevision: 1.0.0
 :toc:
+:sectnums:
 
 == Summary
 This Gradle plugin serves a test plugin for Gradle plugin builds. It contains some helper classes, methods and a Spock extension 'TestDir' for test directories. Furthermore, it contains the necessary helper tasks and test extension for the Gradle TestKit (see https://docs.gradle.org/current/userguide/test_kit.html).
