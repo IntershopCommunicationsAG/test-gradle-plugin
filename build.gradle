@@ -90,7 +90,7 @@ publishing {
 
 test {
     // Gradle versions for test
-    systemProperty 'intershop.gradle.versions', '2.10,2.11'
+    systemProperty 'intershop.gradle.versions', '2.11,3.0'
 }
 
 // This is a workaround and can be removed, when Gradle supports this.
