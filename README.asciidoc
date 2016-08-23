@@ -1,7 +1,5 @@
 = Gradle Test Plugin
-:latestRevision: 1.0.0
-:toc:
-:sectnums:
+:latestRevision: 2.0.0
 
 == Summary
 This Gradle plugin serves a test plugin for Gradle plugin builds. It contains some helper classes, methods and a Spock extension 'TestDir' for test directories. Furthermore, it contains the necessary helper tasks and test extension for the Gradle TestKit (see https://docs.gradle.org/current/userguide/test_kit.html).
@@ -111,7 +109,7 @@ class IntegrationPluginSpec extends AbstractIntegrationSpec {
             }
 
             group = 'com.test'
-            version = '1.0.0.0'
+            version = '1.0.0'
 
             sourceCompatibility = 1.7
             targetCompatibility = 1.7
@@ -148,7 +146,7 @@ For the use of the method `'supportedGradleVersions'` it is necessary to specify
 
 test {
     // Gradle versions for test
-    systemProperty 'intershop.gradle.versions', '2.8,2.9'
+    systemProperty 'intershop.gradle.versions', '2.11,3.0'
 }
 
 ...
