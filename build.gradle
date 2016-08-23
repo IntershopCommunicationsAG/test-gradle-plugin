@@ -24,10 +24,10 @@ plugins {
 
 group 'com.intershop.gradle.test'
 description 'Gradle test plugin - test extension for Gradle plugin builds'
-version = '1.0.0'
+version = '2.0.0'
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 // set correct project status
 if (project.version.endsWith('-SNAPSHOT')) {
@@ -90,7 +90,7 @@ publishing {
 
 test {
     // Gradle versions for test
-    systemProperty 'intershop.gradle.versions', '2.10,2.11'
+    systemProperty 'intershop.gradle.versions', '2.11,3.0'
 }
 
 // This is a workaround and can be removed, when Gradle supports this.
@@ -138,6 +138,8 @@ dependencies {
     compile('org.spockframework:spock-core:1.0-groovy-2.4'){
         exclude group: 'org.codehaus.groovy'
     }
+
+    compile 'commons-io:commons-io:2.2'
 
     compile gradleTestKit()
     testRuntime files(createClasspathManifest)
