@@ -213,6 +213,23 @@ class AbstractIntegrationSpecSpec extends AbstractIntegrationSpec {
         new File(repoDir, 'com.intershop.component/component/ivy-2.1.2.3.xml').exists()
     }
 
+    def 'test IVY repo builder with different pattern'() {
+        when:
+        File repoDir = new File(testProjectDir, 'build/ivyrepo')
+
+        new TestIvyRepoBuilder().repository(
+                ivyPattern: '[organisation]/[module]/[revision]/[type]s/ivy-[revision].xml',
+                artifactPattern: '[organisation]/[module]/[revision]/[ext]s/[artifact]-[type](-[classifier])-[revision].[ext]') {
+            module(org:'com.intershop.component', name:'component', rev:'1.1.2.3')
+            module(org:'com.intershop.component', name:'component', rev:'2.1.2.3')
+        }.writeTo(repoDir)
+
+        then:
+        repoDir.exists()
+        new File(repoDir, 'com.intershop.component/component/1.1.2.3/ivys/ivy-1.1.2.3.xml').exists()
+        new File(repoDir, 'com.intershop.component/component/2.1.2.3/ivys/ivy-2.1.2.3.xml').exists()
+    }
+
     def 'test MVN repo builder'() {
         when:
         File repoDir = new File(testProjectDir, 'build/mvnrepo')

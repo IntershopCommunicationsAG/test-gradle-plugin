@@ -1,5 +1,5 @@
 = Gradle Test Plugin
-:latestRevision: 2.2.0
+:latestRevision: 2.3.0
 
 == Summary
 This Gradle plugin serves a test plugin for Gradle plugin builds. It contains some helper classes, methods and a Spock extension 'TestDir' for test directories. Furthermore, it contains the necessary helper tasks and test extension for the Gradle TestKit (see https://docs.gradle.org/current/userguide/test_kit.html).
@@ -216,6 +216,119 @@ The baseDir is without any special configuration taken from the test system prop
 | *large*            | `boolean` | `false`| If set the test directory is expected to be large and is cleaned using OS commands. +
 *CAUTION*: This does not work for long directories on Windows.
 |===
+
+=== Assertions
+
+This adds supplementary assertions for tests.
+
+[source,groovy,subs="attributes"]
+----
+import spock.lang.Specification
+
+import static com.intershop.gradle.test.util.Assertions.*
+
+class Spec extends Specification {
+
+    def "file contains content"() {
+        when:
+            File f = new File("test.file")
+            String c = "test.content"
+            f.setText(c)
+
+        then:
+            fileHasContent(f, 'test content')
+    }
+
+    def "file does not contain failures"() {
+         when:
+            File f = new File("test.file")
+            f << """Text that does not contain any messages
+            indicating failures at all"""
+
+         then:
+             isErrorFree('some context', text, ['error','exception'])
+    }
+
+    def "content does not contain failures"() {
+        when:
+            String text = """Text that does not contain any messages
+            indicating failures at all"""
+
+        then:
+            isErrorFree('some context', text, ['error','exception'])
+    }
+
+...
+}
+----
+
+For more information see assigned Groovy doc.
+
+=== Repository Builder
+
+==== Ivy Repository Builder
+
+This builder creates a simply Ivy repository based on Ivy and artifact pattern.
+
+[source,groovy,subs="attributes"]
+----
+import com.intershop.gradle.test.builder.TestIvyRepoBuilder
+
+String writeIvyRepo(File dir) {
+    File repoDir = new File(dir, 'repo')
+
+    new TestIvyRepoBuilder().repository (ivyPattern: ivyPattern, artifactPattern: artifactPattern) {
+
+         module(org: 'com.company', name: 'module', rev: '1.0.0') {
+             dependency org: 'com.company', name: 'dep1', rev: '1.0.0'
+             dependency org: 'com.company', name: 'dep2', rev: '1.0.0'
+             dependency org: 'com.company', name: 'dep3', rev: '1.0.0'
+         }
+         module(org: 'com.company', name: 'dep1', rev: '1.0.0')
+         module(org: 'com.company', name: 'dep2', rev: '1.0.0')
+         module(org: 'com.company', name: 'dep3', rev: '1.0.0')
+
+    }.writeTo(testDir)
+}
+----
+
+For more information see assigned Groovy doc.
+
+==== Maven Repository Builder
+
+This builder creates a simply Maven repository.
+
+[source,groovy,subs="attributes"]
+----
+import com.intershop.gradle.test.builder.TestMavenRepoBuilder
+
+String writeMavenRepo(File dir) {
+    File repoDir = new File(dir, 'repo')
+
+    new TestMavenRepoBuilder().repository {
+        project(artifactId:'foo') {
+            dependency(artifactId:'dep')
+        }
+        project(artifactId:'bar', packaging:'pkg', classifier:'cls') {
+            module('sub1')
+            module('sub2')
+            parent(artifactId:'par', relativePath:'relPath')
+            dependency(artifactId:'dep1', classifier:'cls', scope:'scope', type:'typ', optional:true)
+            dependency(artifactId:'dep2', optional:false)
+
+            artifact('content')
+            artifact {
+                file(path:'foo/bar', 'bazzzz')
+            }
+            artifact(classifier:'javadoc') {
+                dir('foo/baz')
+            }
+        }
+    }.writeTo(testDir)
+}
+----
+
+For more information see assigned Groovy doc.
 
 == Java Doc
 
