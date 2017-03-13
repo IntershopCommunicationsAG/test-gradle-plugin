@@ -30,25 +30,17 @@ import org.gradle.api.Project
  *
  * For information about its usage, consider the following example:
  * <pre>
- * new TestIvyRepoBuilder().repository {
- *     project(artifactId:'foo') {
- *         dependency(artifactId:'dep')
- *     }
- *     project(artifactId:'bar', packaging:'pkg', classifier:'cls') {
- *         module('sub1')
- *         module('sub2')
- *         parent(artifactId:'par', relativePath:'relPath')
- *         dependency(artifactId:'dep1', classifier:'cls', scope:'scope', type:'typ', optional:true)
- *         dependency(artifactId:'dep2', optional:false)
+ * new TestIvyRepoBuilder().repository (ivyPattern: ivyPattern, artifactPattern: artifactPattern) {
  *
- *         artifact('content')
- *         artifact {
- *             file(path:'foo/bar', 'bazzzz')
- *         }
- *         artifact(classifier:'javadoc') {
- *             dir('foo/baz')
- *         }
- *     }
+ *      module(org: 'com.company', name: 'module', rev: '1.0.0') {
+ *          dependency org: 'com.company', name: 'dep1', rev: '1.0.0'
+ *          dependency org: 'com.company', name: 'dep2', rev: '1.0.0'
+ *          dependency org: 'com.company', name: 'dep3', rev: '1.0.0'
+ *      }
+ *      module(org: 'com.company', name: 'dep1', rev: '1.0.0')
+ *      module(org: 'com.company', name: 'dep2', rev: '1.0.0')
+ *      module(org: 'com.company', name: 'dep3', rev: '1.0.0')
+ *
  * }.writeTo(testDir)
  * </pre>
  */
