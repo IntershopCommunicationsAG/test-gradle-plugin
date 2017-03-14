@@ -24,7 +24,7 @@ plugins {
 group 'com.intershop.gradle.test'
 description 'Gradle test plugin - test extension for Gradle plugin builds'
 
-version = '2.3.3'
+version = '2.3.4'
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
