@@ -176,7 +176,7 @@ bintray {
     user = System.getenv('BINTRAY_USER')
     key = System.getenv('BINTRAY_KEY')
     pkg {
-        repo = 'maven'
+        repo = 'GradlePlugins'
         name = project.name
         userOrg = 'intershopcommunicationsag'
 
