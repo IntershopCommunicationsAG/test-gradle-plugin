@@ -52,34 +52,38 @@ class TestMavenRepoBuilder extends BuilderSupport {
             projects*.writeTo(directory)
         }
 
-        String declareRepository(File testDir) {
+        String declareRepository(File repoDir) {
             def _name = ''
             if (name) {
                 _name = "name '$name'"
             }
 
-            """
+            String returnValue = """
             repositories {
             maven {
                 ${_name}
-                url "file:///${testDir.absolutePath.replace('\\', '/')}/"
+                url "${getURL(repoDir)}"
                 }
             }
-            """
+            """.stripIndent()
+
+            return returnValue
         }
 
-        String declareRepositoryForRepositoryHandler(File testDir) {
+        String declareRepositoryForRepositoryHandler(File repoDir) {
             def _name = ''
             if (name) {
                 _name = "name '$name'"
             }
 
-            """
+            String returnValue = """
             maven {
                 ${_name}
-                url "file:///${testDir.absolutePath.replace('\\', '/')}/"
+                url "${getURL(repoDir)}"
             }
-            """
+            """.stripIndent()
+
+            return returnValue
         }
     }
 
@@ -331,14 +335,32 @@ class TestMavenRepoBuilder extends BuilderSupport {
         result
     }
 
+    String declareRepositoryForRepositoryHandler(File repoDir, String name) {
+        def _name = ''
+        if (name) {
+            _name = "name '$name'"
+        }
+
+        String returnValue = """
+        maven {
+            ${_name}
+            url "${getURL(repoDir)}"
+        }
+        """.stripIndent()
+
+        return returnValue
+    }
+
     static String declareRepository(File repoDir) {
-        """
+        String returnValue = """
         repositories {
         maven {
                 url "${getURL(repoDir)}"
             }
         }
-        """
+        """.stripIndent()
+
+        return returnValue
     }
 
     static void declareRepository(org.gradle.api.Project project, File repoDir) {
