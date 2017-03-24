@@ -42,7 +42,7 @@ import java.util.zip.ZipOutputStream
  */
 class TestIvyRepoBuilder extends BuilderSupport {
     static final String defaultIvyPattern = "[organisation]/[module]/[revision]/ivy-[revision].xml"
-    static final String defaultArtifactPattern = "[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier])(.[ext])"
+    static final String defaultArtifactPattern = "[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"
 
     static class Repository {
         String name
@@ -413,7 +413,7 @@ class TestIvyRepoBuilder extends BuilderSupport {
         String returnValue = """
             ivy {
                 ${_name}
-                url "file:///${repoPath}${repoPath.endsWith('/') ?'':'/'}"
+                url "${repoPath}${repoPath.endsWith('/') ?'':'/'}"
                 layout('pattern') {
                     ivy "${defaultIvyPattern}"
                     artifact "${defaultArtifactPattern}"
