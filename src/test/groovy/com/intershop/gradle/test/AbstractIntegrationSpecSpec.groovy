@@ -147,8 +147,8 @@ class AbstractIntegrationSpecSpec extends AbstractIntegrationSpec {
         then:
         result.task(':publish').outcome == SUCCESS
         repoDir.exists()
-        new File(repoDir, 'com.intershop/component/ivy-1.0.0.xml').exists()
-        new File(repoDir, 'com.intershop/component/component-1.0.0.jar').exists()
+        new File(repoDir, 'com.intershop/component/1.0.0/ivy-1.0.0.xml').exists()
+        new File(repoDir, 'com.intershop/component/1.0.0/component-1.0.0.jar').exists()
 
         where:
         gradleVersion << supportedGradleVersions
@@ -209,8 +209,8 @@ class AbstractIntegrationSpecSpec extends AbstractIntegrationSpec {
 
         then:
         repoDir.exists()
-        new File(repoDir, 'com.intershop.component/component/ivy-1.1.2.3.xml').exists()
-        new File(repoDir, 'com.intershop.component/component/ivy-2.1.2.3.xml').exists()
+        new File(repoDir, 'com.intershop.component/component/1.1.2.3/ivy-1.1.2.3.xml').exists()
+        new File(repoDir, 'com.intershop.component/component/2.1.2.3/ivy-2.1.2.3.xml').exists()
     }
 
     def 'test IVY repo builder with different pattern'() {
