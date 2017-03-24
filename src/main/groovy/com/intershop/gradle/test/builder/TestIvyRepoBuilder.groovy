@@ -41,8 +41,8 @@ import java.util.zip.ZipOutputStream
  * </pre>
  */
 class TestIvyRepoBuilder extends BuilderSupport {
-    static final String defaultIvyPattern = "[organisation]/[module]/ivy-[revision].xml"
-    static final String defaultArtifactPattern = "[organisation]/[module]/[artifact]-[revision].[ext]"
+    static final String defaultIvyPattern = "[organisation]/[module]/[revision]/ivy-[revision].xml"
+    static final String defaultArtifactPattern = "[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier])(.[ext])"
 
     static class Repository {
         String name
