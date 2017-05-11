@@ -381,7 +381,9 @@ class TestIvyRepoBuilder extends BuilderSupport {
         result
     }
 
-    static String declareRepository(File testDir, String name = '') {
+    static String declareRepository(File testDir, String name = '',
+                                    String ivyPattern = defaultIvyPattern,
+                                    String artifactPattern = defaultArtifactPattern) {
         String repoPath = testDir.toURI().toURL()
 
         def _name = ''
@@ -393,8 +395,8 @@ class TestIvyRepoBuilder extends BuilderSupport {
             repositories {
             ivy {
                 ${_name}
-                ivyPattern "${repoPath}${repoPath.endsWith('/') ?'':'/'}${defaultIvyPattern}"
-                artifactPattern "${repoPath}${repoPath.endsWith('/') ? '' : '/'}${defaultArtifactPattern}"
+                ivyPattern "${repoPath}${repoPath.endsWith('/') ?'':'/'}${ivyPattern}"
+                artifactPattern "${repoPath}${repoPath.endsWith('/') ? '' : '/'}${artifactPattern}"
                 }
             }
             """.stripIndent()
@@ -402,7 +404,9 @@ class TestIvyRepoBuilder extends BuilderSupport {
         return returnValue
     }
 
-    static String declareRepositoryForRepositoryHandler(File testDir, String name = '') {
+    static String declareRepositoryForRepositoryHandler(File testDir, String name = '',
+                                                        String ivyPattern = defaultIvyPattern,
+                                                        String artifactPattern = defaultArtifactPattern) {
         String repoPath = testDir.toURI().toURL()
 
         def _name = ''
@@ -415,8 +419,8 @@ class TestIvyRepoBuilder extends BuilderSupport {
                 ${_name}
                 url "${repoPath}${repoPath.endsWith('/') ?'':'/'}"
                 layout('pattern') {
-                    ivy "${defaultIvyPattern}"
-                    artifact "${defaultArtifactPattern}"
+                    ivy "${ivyPattern}"
+                    artifact "${artifactPattern}"
                 }
             }
             """.stripIndent()
@@ -424,11 +428,13 @@ class TestIvyRepoBuilder extends BuilderSupport {
         return returnValue
     }
 
-    static void declareRepository(Project project, File testDir) {
+    static void declareRepository(Project project, File testDir,
+                                  String ivyPattern = defaultIvyPattern,
+                                  String artifactPattern = defaultArtifactPattern) {
         project.repositories {
             ivy {
-                ivyPattern "${testDir.absolutePath.replace('\\', '/')}/${defaultIvyPattern}"
-                artifactPattern "${testDir.absolutePath.replace('\\', '/')}/${defaultArtifactPattern}"
+                ivyPattern "${testDir.absolutePath.replace('\\', '/')}/${ivyPattern}"
+                artifactPattern "${testDir.absolutePath.replace('\\', '/')}/${artifactPattern}"
             }
         }
     }
