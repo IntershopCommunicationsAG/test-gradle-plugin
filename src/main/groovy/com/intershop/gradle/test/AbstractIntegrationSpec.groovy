@@ -53,13 +53,6 @@ abstract class AbstractIntegrationSpec extends Specification {
      * and creates an empty build.gradle
      */
     def setup() {
-        def pluginClasspathResource = getClass().classLoader.findResource("plugin-classpath.txt")
-        if (pluginClasspathResource == null) {
-            throw new IllegalStateException("Did not find plugin classpath resource, run `testClasses` build task.")
-        }
-
-        pluginClasspath = pluginClasspathResource.readLines().collect { new File(it) }
-
         buildFile = file('build.gradle')
     }
 
@@ -82,7 +75,7 @@ abstract class AbstractIntegrationSpec extends Specification {
     protected GradleRunner getPreparedGradleRunner() {
         return GradleRunner.create()
                 .withProjectDir(testProjectDir)
-                .withPluginClasspath(pluginClasspath)
+                .withPluginClasspath()
                 .forwardOutput()
     }
 
