@@ -24,10 +24,10 @@ plugins {
 group 'com.intershop.gradle.test'
 description 'Gradle test plugin - test extension for Gradle plugin builds'
 
-version = '2.4.0'
+version = '3.0.0'
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 // set correct project status
 if (project.version.endsWith('-SNAPSHOT')) {
@@ -36,7 +36,8 @@ if (project.version.endsWith('-SNAPSHOT')) {
 
 test {
     // Gradle versions for test
-    systemProperty 'intershop.gradle.versions', '2.11, 3.5'
+    systemProperty 'intershop.gradle.versions', '3.5, 4.0'
+    systemProperty 'intershop.test.base.dir', (new File(project.buildDir, 'test-working')).absolutePath
 }
 
 task copyAsciiDoc {
@@ -87,7 +88,7 @@ jacocoTestReport {
         xml.enabled = true // coveralls plugin depends on xml format report
         html.enabled = true
 
-        html.destination "${buildDir}/jacocoHtml"
+        html.setDestination(new File(project.buildDir,  'jacocoHtml'))
     }
 }
 
@@ -146,30 +147,6 @@ publishing {
     }
 }
 
-// This is a workaround and can be removed, when Gradle supports this.
-// Write the plugin's classpath to a file to share with the tests
-task createClasspathManifest {
-    def outputDir = file("$buildDir/$name")
-
-    inputs.files sourceSets.main.runtimeClasspath
-    outputs.dir outputDir
-
-    doLast {
-        outputDir.mkdirs()
-
-        // this is necessary because we want test all with the jar
-        Set<File> classpathFiles = sourceSets.main.runtimeClasspath.getFiles()
-        classpathFiles.remove(sourceSets.main.output.classesDir)
-        classpathFiles.remove(sourceSets.main.output.resourcesDir)
-
-        Task task = tasks.findByName(sourceSets.main.jarTaskName)
-        task.getOutputs().files.each {File f ->
-            classpathFiles.add(f)
-        }
-        file("$outputDir/plugin-classpath.txt").text = classpathFiles.join("\n")
-    }
-}
-
 // this is necessary because we want test all with the jar
 test.dependsOn jar
 
@@ -204,29 +181,13 @@ bintray {
 
 bintrayUpload.dependsOn asciidoctor
 
-pluginBundle {
-    website = "https://github.com/IntershopCommunicationsAG/${project.name}"
-    vcsUrl = "https://github.com/IntershopCommunicationsAG/${project.name}"
-    description = project.description
-    tags = ['intershop', 'gradle', 'plugin', 'test']
-
-    plugins {
-        gradleTestPlugin {
-            id = 'com.intershop.gradle.test'
-            displayName = 'Gradle Test Plugin'
-        }
-    }
-}
-
 dependencies {
     compile('org.spockframework:spock-core:1.1-groovy-2.4'){
         exclude group: 'org.codehaus.groovy'
     }
 
     compile 'commons-io:commons-io:2.2'
-
     compile gradleTestKit()
-    testRuntime files(createClasspathManifest)
 }
 
 repositories {

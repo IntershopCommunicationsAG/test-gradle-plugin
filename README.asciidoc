@@ -1,30 +1,30 @@
 = Gradle Test Plugin
-:latestRevision: 2.4.0
+:latestRevision: 3.0.0
 
 == Summary
-This Gradle plugin serves a test plugin for Gradle plugin builds. It contains some helper classes, methods and a Spock extension 'TestDir' for test directories. Furthermore, it contains the necessary helper tasks and test extension for the Gradle TestKit (see https://docs.gradle.org/current/userguide/test_kit.html).
+This library serves some functionality for Gradle plugin builds.
+It contains some helper classes, methods and a Spock extension 'TestDir' for test directories.
 
 == Usage
 To use the Gradle Test Plugin, add the following lines to your build script:
 
 [source,groovy,subs="attributes"]
 ----
-apply plugin: 'com.intershop.gradle.test'
 
-buildscript {
+    test {
+        // Gradle versions for test
+        systemProperty 'intershop.gradle.versions', '3.5, 4.0'
+        systemProperty 'intershop.test.base.dir', (new File(project.buildDir, 'test-working')).absolutePath
+    }
+
     dependencies {
         classpath 'com.intershop.gradle.test:test-gradle-plugin:{latestRevision}'
     }
 }
+
 ----
 
-=== Task 'createClasspathManifest'
-This task creates a file `'plugin-classpath.txt'` with paths of all test runtime dependencies in `'<buildDir>/createClasspathManifest'`.
-The task is added to the test runtime dependency configuration and runs before a test is executed.
-The output file is used for the creation of the classpath for integration tests.
-
 === Basic Test Classes
-This plugin provides some basic test classes for integration and basic plugin tests. Therefore, it is necessary to add this library also to the test dependency configuration.
 
 ==== Abstract Integration Test
 Extend your integration test with `com.intershop.gradle.test.AbstractIntegrationSpec` (mandatory):
@@ -146,7 +146,13 @@ For the use of the method `'supportedGradleVersions'` it is necessary to specify
 
 test {
     // Gradle versions for test
-    systemProperty 'intershop.gradle.versions', '2.11,3.0'
+    systemProperty 'intershop.gradle.versions', '2.11, 3.0'
+    systemProperty 'intershop.test.base.dir', (new File(project.buildDir, 'test-working')).absolutePath
+}
+
+dependencies {
+    classpath 'com.intershop.gradle.test:test-gradle-plugin:{latestRevision}'
+    compile gradleTestKit()
 }
 
 ...
