@@ -70,6 +70,7 @@ abstract class AbstractIntegrationSpec extends Specification {
     protected GradleRunner getPreparedGradleRunner() {
         String debugSupportStr = System.getenv(DEBUGSUPPORT)
         boolean debugSupport = (debugSupportStr != null && debugSupportStr.toLowerCase().trim() == 'true')
+
         return GradleRunner.create()
                 .withProjectDir(testProjectDir)
                 .withPluginClasspath()
