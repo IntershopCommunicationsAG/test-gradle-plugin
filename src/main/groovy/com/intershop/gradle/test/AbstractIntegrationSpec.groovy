@@ -30,17 +30,12 @@ import spock.lang.Specification
 @Slf4j
 abstract class AbstractIntegrationSpec extends Specification {
 
+    public final static String DEBUGSUPPORT = 'IDE_TEST_DEBUG_SUPPORT'
     /**
      * Project directory for tests
      */
     @TestDir
     File testProjectDir
-
-    /**
-     * Classpath with Gradle classes
-     */
-    //plugin classpath
-    List<File> pluginClasspath
 
     /**
      * Build file for root test project
@@ -73,9 +68,12 @@ abstract class AbstractIntegrationSpec extends Specification {
      * @return prepared GradleRunner
      */
     protected GradleRunner getPreparedGradleRunner() {
+        String debugSupportStr = System.getenv(DEBUGSUPPORT)
+        boolean debugSupport = (debugSupportStr != null && debugSupportStr.toLowerCase().trim() == 'true')
         return GradleRunner.create()
                 .withProjectDir(testProjectDir)
                 .withPluginClasspath()
+                .withDebug(debugSupport)
                 .forwardOutput()
     }
 

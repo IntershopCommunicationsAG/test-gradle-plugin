@@ -1,6 +1,5 @@
 plugins {
     // project plugins
-    id 'java-gradle-plugin'
     id 'groovy'
     // test coverage
     id 'jacoco'
@@ -9,22 +8,22 @@ plugins {
     id 'idea'
 
     // plugin for documentation
-    id 'org.asciidoctor.convert' version '1.5.3'
+    id 'org.asciidoctor.convert' version '1.5.8.1'
 
     // publish plugin
     id 'maven-publish'
 
-    // plugin for publishing to Gradle Portal
-    id "com.gradle.plugin-publish" version "0.9.4"
+    // intershop version plugin
+    id 'com.intershop.gradle.scmversion' version '3.2.0'
 
     // plugin for publishing to jcenter
-    id 'com.jfrog.bintray' version '1.7.3'
+    id 'com.jfrog.bintray' version '1.8.4'
 }
 
 group 'com.intershop.gradle.test'
 description 'Gradle test plugin - test extension for Gradle plugin builds'
 
-version = '3.0.0'
+version = '3.2.0'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -36,7 +35,7 @@ if (project.version.endsWith('-SNAPSHOT')) {
 
 test {
     // Gradle versions for test
-    systemProperty 'intershop.gradle.versions', '3.5, 4.0'
+    systemProperty 'intershop.gradle.versions', '4.1'
     systemProperty 'intershop.test.base.dir', (new File(project.buildDir, 'test-working')).absolutePath
 }
 
