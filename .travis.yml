@@ -18,7 +18,7 @@ script:
   - ./testTravisJDK8.sh
   - jdk_switcher use openjdk8
   - ./testTravisJDK8.sh
-  - jdk_switcher use openjdk11
+  - export JAVA_HOME=$HOME/openjdk11
   - ./publishTravis.sh
 notifications:
   webhooks:
