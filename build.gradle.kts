@@ -36,7 +36,7 @@ plugins {
 group = "com.intershop.gradle.test"
 description = "Gradle test library - test extension for Gradle plugin builds"
 
-version = "3.2.0"
+version = "3.3.0-SNAPSHOT"
 
 configure<JavaPluginConvention> {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -48,9 +48,16 @@ if (project.version.toString().endsWith("-SNAPSHOT")) {
     status = "snapshot'"
 }
 
+
+
 tasks.withType<Test>().configureEach {
     // Gradle versions for test
-    systemProperty("intershop.gradle.versions", "4.9,5.0-rc-3")
+    if (System.getProperty("GRADLETEST_VERSION").isNullOrEmpty()) {
+        systemProperty("intershop.gradle.versions", System.getProperty("GRADLETEST_VERSION"))
+    } else {
+        systemProperty("intershop.gradle.versions", "4.9,5.0-rc-3")
+    }
+
     systemProperty("intershop.test.base.dir", (File(project.buildDir, "test-working")).absolutePath)
 }
 

@@ -110,6 +110,7 @@ class AbstractIntegrationSpecSpec extends AbstractIntegrationSpec {
         f.isFile()
     }
 
+    @Unroll
     def 'test IVY repo builder publishing #gradleVersion'(gradleVersion) {
         given:
         file('settings.gradle') << """
@@ -157,6 +158,7 @@ class AbstractIntegrationSpecSpec extends AbstractIntegrationSpec {
         gradleVersion << supportedGradleVersions
     }
 
+    @Unroll
     def 'test MVN repo builder publishing #gradleVersion'(gradleVersion) {
         given:
         file('settings.gradle') << """
