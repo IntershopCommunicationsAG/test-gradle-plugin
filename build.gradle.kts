@@ -50,7 +50,7 @@ if (project.version.toString().endsWith("-SNAPSHOT")) {
 
 tasks.withType<Test>().configureEach {
     // Gradle versions for test
-    systemProperty("intershop.gradle.versions", "4.4,4.9,5.0-rc-3")
+    systemProperty("intershop.gradle.versions", "4.9,5.0-rc-3")
     systemProperty("intershop.test.base.dir", (File(project.buildDir, "test-working")).absolutePath)
 }
 
