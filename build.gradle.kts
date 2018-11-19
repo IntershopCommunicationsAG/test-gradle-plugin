@@ -51,8 +51,10 @@ if (project.version.toString().endsWith("-SNAPSHOT")) {
 
 
 tasks.withType<Test>().configureEach {
+    testLogging.showStandardStreams = true
+
     // Gradle versions for test
-    if (System.getProperty("GRADLETEST_VERSION").isNullOrEmpty()) {
+    if (! System.getProperty("GRADLETEST_VERSION").isNullOrEmpty()) {
         systemProperty("intershop.gradle.versions", System.getProperty("GRADLETEST_VERSION"))
     } else {
         systemProperty("intershop.gradle.versions", "4.9,5.0-rc-3")

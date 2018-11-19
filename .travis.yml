@@ -15,9 +15,9 @@ before_script:
 script:
   - ./testTravis.sh
   - jdk_switcher use oraclejdk8
-  - ./testTravis.sh
+  - ./testTravisJDK8.sh
   - jdk_switcher use openjdk8
-  - ./testTravis.sh
+  - ./testTravisJDK8.sh
   - jdk_switcher use openjdk11
   - ./publishTravis.sh
 notifications:
