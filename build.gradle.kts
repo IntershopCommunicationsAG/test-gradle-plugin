@@ -4,16 +4,6 @@ import org.asciidoctor.gradle.AsciidoctorTask
 import org.asciidoctor.gradle.AsciidoctorExtension
 import java.util.Date
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-
-    dependencies {
-        classpath("org.asciidoctor:asciidoctor-gradle-plugin:1.5.9.2")
-    }
-}
-
 plugins {
     // project plugins
     groovy

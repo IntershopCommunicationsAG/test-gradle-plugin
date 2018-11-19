@@ -363,6 +363,18 @@ class TestMavenRepoBuilder extends BuilderSupport {
         return returnValue
     }
 
+    static String declareRepositoryKotlin(File repoDir) {
+        String returnValue = """
+        repositories {
+            maven {
+                setUrl("${getURL(repoDir)}")
+            }
+        }
+        """.stripIndent()
+
+        return returnValue
+    }
+
     static void declareRepository(org.gradle.api.Project project, File repoDir) {
         project.repositories {
             maven {
