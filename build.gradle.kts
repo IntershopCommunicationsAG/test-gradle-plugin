@@ -214,6 +214,8 @@ dependencies {
     }
 
     compile("commons-io:commons-io:2.2")
+    compile("com.sun.xml.bind:jaxb-impl:2.2.3")
+
     compile(gradleTestKit())
 }
 
