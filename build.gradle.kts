@@ -26,7 +26,7 @@ plugins {
 group = "com.intershop.gradle.test"
 description = "Gradle test library - test extension for Gradle plugin builds"
 
-version = "3.3.0-SNAPSHOT"
+version = "3.1.0-dev.1"
 
 configure<JavaPluginConvention> {
     sourceCompatibility = JavaVersion.VERSION_1_8
