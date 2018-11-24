@@ -33,6 +33,7 @@ abstract class AbstractIntegrationGroovySpec extends AbstractIntegrationSpec {
      */
     def setup() {
         buildFile = file('build.gradle')
+        settingsFile = file('settings.gradle')
     }
 
     /**
@@ -42,14 +43,14 @@ abstract class AbstractIntegrationGroovySpec extends AbstractIntegrationSpec {
      * @param settingsGradle    settings gradle file object of the root project
      * @return                  the file object for the project folder of the subproject
      */
-    protected File createSubProject(String projectPath, File settingsGradle, def buildFileContent) {
+    protected File createSubProject(String projectPath, def buildFileContent) {
         File f = directory(projectPath.replaceAll(':','/'))
 
         if(buildFileContent) {
             file('build.gradle', f) << buildFileContent.stripIndent()
         }
 
-        settingsGradle << """
+        settingsFile << """
             include '${projectPath}'
         """.stripIndent()
         return f

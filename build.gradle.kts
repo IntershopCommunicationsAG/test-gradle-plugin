@@ -154,11 +154,11 @@ publishing {
                 val root = asNode()
                 root.appendNode("name", project.name)
                 root.appendNode("description", project.description)
-                root.appendNode("url", "https:/gitlab.intershop.de/IntershopGradlePlugins/${project.name}")
+                root.appendNode("url", "https://github.com/IntershopCommunicationsAG/${project.name}")
 
                 val scm = root.appendNode( "scm" )
-                scm.appendNode( "url", "https://gitlab.intershop.de/IntershopGradlePlugins/${project.name}")
-                scm.appendNode( "connection", "scm:git:https://gitlab.intershop.de/IntershopGradlePlugins/${project.name}.git")
+                scm.appendNode( "url", "https://github.com/IntershopCommunicationsAG/${project.name}")
+                scm.appendNode( "connection", "git@github.com:IntershopCommunicationsAG/${project.name}.git")
 
                 val org = root.appendNode( "organization" )
                 org.appendNode( "name", "Intershop Communications" )

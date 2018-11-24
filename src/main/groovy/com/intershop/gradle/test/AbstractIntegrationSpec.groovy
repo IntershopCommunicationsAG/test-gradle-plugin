@@ -44,6 +44,20 @@ abstract class AbstractIntegrationSpec extends Specification {
     File buildFile
 
     /**
+     * Settings gradle file of the root test project
+     */
+    File settingsFile
+
+    /**
+     * set up simple test project settings gradle
+     */
+    void initSettingsFile() {
+        settingsFile << """
+        rootProject.name = "testproject"
+        """.stripIndent()
+    }
+
+    /**
      * Returns a list of Gradle versions from the test
      * system properties 'intershop.gradle.versions'
      */
