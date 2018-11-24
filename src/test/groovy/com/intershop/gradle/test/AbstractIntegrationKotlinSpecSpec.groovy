@@ -12,8 +12,8 @@ class AbstractIntegrationKotlinSpecSpec extends AbstractIntegrationKotlinSpec {
 
     def 'create subproject'() {
         when:
-        File settingsGradle = file('settings.gradle.kts')
-        File pDir = createSubProject('test1:test2', settingsGradle,
+        initSettingsFile()
+        File pDir = createSubProject('test1:test2',
             """
             plugins {
                 java
@@ -23,14 +23,14 @@ class AbstractIntegrationKotlinSpecSpec extends AbstractIntegrationKotlinSpec {
         File bFile = new File(pDir, 'build.gradle.kts')
 
         then:
-        settingsGradle.exists()
+        settingsFile.exists()
         pDir.exists()
 
         pDir.parentFile.name == 'test1'
         bFile.exists()
 
         bFile.text.contains("java")
-        settingsGradle.text.contains('include("test1:test2")')
+        settingsFile.text.contains('include("test1:test2")')
     }
 
 

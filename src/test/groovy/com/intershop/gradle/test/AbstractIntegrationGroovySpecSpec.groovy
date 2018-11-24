@@ -27,8 +27,8 @@ class AbstractIntegrationGroovySpecSpec extends AbstractIntegrationGroovySpec {
 
     def 'create subproject'() {
         when:
-        File settingsGradle = file('settings.gradle')
-        File pDir = createSubProject('test1:test2', settingsGradle,
+        initSettingsFile()
+        File pDir = createSubProject('test1:test2',
         """
             apply plugin: 'java'
         """)
@@ -36,14 +36,14 @@ class AbstractIntegrationGroovySpecSpec extends AbstractIntegrationGroovySpec {
         File bFile = new File(pDir, 'build.gradle')
 
         then:
-        settingsGradle.exists()
+        settingsFile.exists()
         pDir.exists()
 
         pDir.parentFile.name == 'test1'
         bFile.exists()
 
         bFile.text.contains("apply plugin: 'java'")
-        settingsGradle.text.contains("include 'test1:test2'")
+        settingsFile.text.contains("include 'test1:test2'")
     }
 
 
