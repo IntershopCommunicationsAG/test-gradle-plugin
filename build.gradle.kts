@@ -3,6 +3,7 @@ import org.asciidoctor.gradle.jvm.AsciidoctorTask
 import java.util.Date
 
 plugins {
+    `java-library`
     // project plugins
     groovy
     // test coverage
@@ -192,12 +193,11 @@ repositories {
 }
 
 dependencies {
-    implementation("org.spockframework:spock-core:1.2-groovy-2.5") {
+    api("org.spockframework:spock-core:1.3-groovy-2.5") {
         exclude(group = "org.codehaus.groovy")
     }
 
-    implementation("commons-io:commons-io:2.2")
-    implementation("com.sun.xml.bind:jaxb-impl:2.2.3")
+    api("commons-io:commons-io:2.2")
 
     implementation(gradleTestKit())
 }
