@@ -27,18 +27,29 @@ To use the Gradle Test Plugin, add the following lines to your build script:
 === Basic Test Classes
 
 ==== Abstract Integration Test
-Extend your integration test with `com.intershop.gradle.test.AbstractIntegrationSpec` (mandatory):
+Extend your integration test with `com.intershop.gradle.test.AbstractIntegrationGroovySpec` for Groovy based build scripts,
+for Kotlin based scripts it is necessary to use `com.intershop.gradle.test.AbstractIntegrationKotlinSpec`:
+
 
 [source,groovy,subs="attributes"]
 ----
-import com.intershop.gradle.test.AbstractIntegrationSpec
+import com.intershop.gradle.test.AbstractIntegrationGroovySpec
 
-class IntegrationTestSpec extends AbstractIntegrationSpec {
+class IntegrationTestSpec extends AbstractIntegrationGroovySpec {
 ...
 }
 ----
 
-`AbstractIntegrationSpec` extends `spock.lang.Specification`.
+[source,groovy,subs="attributes"]
+----
+import com.intershop.gradle.test.AbstractIntegrationKotlinSpec
+
+class IntegrationTestSpec extends AbstractIntegrationKotlinSpec {
+...
+}
+----
+
+`AbstractIntegrationGroovySpec` and `AbstractIntegrationKotlinSpec` extends `AbstractIntegrationSpec` which extends `spock.lang.Specification`.
 
 This abstract class comes with some helper methodes, the definition of a project folder, the base definition of the build file and the classpath for GradleRunner (see https://docs.gradle.org/current/userguide/test_kit.html):
 
@@ -92,11 +103,11 @@ File baseDir = testProjectDir | Copies directories with files from test resource
 ----
 package com.package.test
 
-import com.intershop.gradle.test.AbstractIntegrationSpec
+import com.intershop.gradle.test.AbstractIntegrationGroovySpec
 import org.gradle.testkit.runner.GradleRunner
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
-class IntegrationPluginSpec extends AbstractIntegrationSpec {
+class IntegrationPluginSpec extends AbstractIntegrationGroovySpec {
 
     def 'test description'() {
         given:

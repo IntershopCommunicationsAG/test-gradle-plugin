@@ -404,6 +404,29 @@ class TestIvyRepoBuilder extends BuilderSupport {
         return returnValue
     }
 
+    static String declareRepositoryKotlin(File testDir, String name = '',
+                                    String ivyPattern = defaultIvyPattern,
+                                    String artifactPattern = defaultArtifactPattern) {
+        String repoPath = testDir.toURI().toURL()
+
+        def _name = ''
+        if (name) {
+            _name = "name '$name'"
+        }
+
+        String returnValue = """
+            repositories {
+                ivy {
+                    name = "${_name}"
+                    ivyPattern("${repoPath}${repoPath.endsWith('/') ?'':'/'}${ivyPattern}")
+                    artifactPattern("${repoPath}${repoPath.endsWith('/') ? '' : '/'}${artifactPattern}")
+                    }
+            }
+            """.stripIndent()
+
+        return returnValue
+    }
+
     static String declareRepositoryForRepositoryHandler(File testDir, String name = '',
                                                         String ivyPattern = defaultIvyPattern,
                                                         String artifactPattern = defaultArtifactPattern) {

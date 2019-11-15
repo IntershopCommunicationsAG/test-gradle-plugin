@@ -42,27 +42,6 @@ class AbstractIntegrationSpecSpec extends AbstractIntegrationSpec {
         versions.size() > 1
     }
 
-    def 'create subproject'() {
-        when:
-        File settingsGradle = file('settings.gradle')
-        File pDir = createSubProject('test1:test2', settingsGradle,
-        """
-            apply plugin: 'java'
-        """)
-
-        File bFile = new File(pDir, 'build.gradle')
-
-        then:
-        settingsGradle.exists()
-        pDir.exists()
-
-        pDir.parentFile.name == 'test1'
-        bFile.exists()
-
-        bFile.text.contains("apply plugin: 'java'")
-        settingsGradle.text.contains("include 'test1:test2'")
-    }
-
     def 'create hello world file'() {
         when:
         writeJavaTestClass('com.intershop')
@@ -108,100 +87,6 @@ class AbstractIntegrationSpecSpec extends AbstractIntegrationSpec {
         then:
         f.exists()
         f.isFile()
-    }
-
-    def 'test IVY repo builder publishing #gradleVersion'(gradleVersion) {
-        given:
-        file('settings.gradle') << """
-            rootProject.name = 'component'
-        """.stripIndent()
-
-        writeJavaTestClass('com.intershop.test')
-
-        File repoDir = new File(testProjectDir, 'build/ivyrepo')
-
-        buildFile << """
-            plugins {
-                id 'java'
-                id 'ivy-publish'
-            }
-
-            group = 'com.intershop'
-            version = '1.0.0'
-
-            publishing {
-                ${TestIvyRepoBuilder.declareRepository(repoDir)}
-                publications {
-                    ivy(IvyPublication) {
-                        from components.java
-                    }
-                }
-            }
-        """.stripIndent()
-
-        when:
-        def result = GradleRunner.create()
-                .withProjectDir(testProjectDir)
-                .forwardOutput()
-                .withArguments('publish', '--stacktrace', '-i')
-                .withGradleVersion(gradleVersion)
-                .build()
-
-        then:
-        result.task(':publish').outcome == SUCCESS
-        repoDir.exists()
-        new File(repoDir, 'com.intershop/component/1.0.0/ivy-1.0.0.xml').exists()
-        new File(repoDir, 'com.intershop/component/1.0.0/component-1.0.0.jar').exists()
-
-        where:
-        gradleVersion << supportedGradleVersions
-    }
-
-    def 'test MVN repo builder publishing #gradleVersion'(gradleVersion) {
-        given:
-        file('settings.gradle') << """
-            rootProject.name = 'component'
-        """.stripIndent()
-
-        writeJavaTestClass('com.intershop.test')
-
-        File repoDir = new File(testProjectDir, 'build/mvnrepo')
-
-        buildFile << """
-            plugins {
-                id 'java'
-                id 'maven-publish'
-            }
-
-            group = 'com.intershop'
-            version = '1.0.0'
-
-            publishing {
-                ${TestMavenRepoBuilder.declareRepository(repoDir)}
-                publications {
-                    mvn(MavenPublication) {
-                        from components.java
-                    }
-                }
-            }
-        """.stripIndent()
-
-        when:
-        def result = GradleRunner.create()
-                .withProjectDir(testProjectDir)
-                .forwardOutput()
-                .withArguments('publish', '--stacktrace', '-i')
-                .withGradleVersion(gradleVersion)
-                .build()
-
-        then:
-        result.task(':publish').outcome == SUCCESS
-        repoDir.exists()
-        new File(repoDir, 'com/intershop/component/1.0.0/component-1.0.0.pom').exists()
-        new File(repoDir, 'com/intershop/component/1.0.0/component-1.0.0.jar').exists()
-
-        where:
-        gradleVersion << supportedGradleVersions
     }
 
     def 'test IVY repo builder'() {

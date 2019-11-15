@@ -44,11 +44,17 @@ abstract class AbstractIntegrationSpec extends Specification {
     File buildFile
 
     /**
-     * Creates a classpath from plugin resources
-     * and creates an empty build.gradle
+     * Settings gradle file of the root test project
      */
-    def setup() {
-        buildFile = file('build.gradle')
+    File settingsFile
+
+    /**
+     * set up simple test project settings gradle
+     */
+    void initSettingsFile() {
+        settingsFile << """
+        rootProject.name = "testproject"
+        """.stripIndent()
     }
 
     /**
@@ -76,26 +82,6 @@ abstract class AbstractIntegrationSpec extends Specification {
                 .withPluginClasspath()
                 .withDebug(debugSupport)
                 .forwardOutput()
-    }
-
-    /**
-     * Test helper method creates a directory for a subproject with a defined project path.
-     *
-     * @param projectPath       eg. 'main_project:project1'
-     * @param settingsGradle    settings gradle file object of the root project
-     * @return                  the file object for the project folder of the subproject
-     */
-    protected File createSubProject(String projectPath, File settingsGradle, def buildFileContent) {
-        File f = directory(projectPath.replaceAll(':','/'))
-
-        if(buildFileContent) {
-            file('build.gradle', f) << buildFileContent.stripIndent()
-        }
-
-        settingsGradle << """
-            include '${projectPath}'
-        """.stripIndent()
-        return f
     }
 
     /**

@@ -18,8 +18,7 @@ package com.intershop.gradle.test.util
 import org.codehaus.groovy.runtime.powerassert.PowerAssertionError
 import spock.lang.Specification
 
-class AssertionsSpec extends Specification
-{
+class AssertionsSpec extends Specification {
     def "isErrorFree succeeds when text contains no failure"() {
         when:
         Assertions.isErrorFree('some context', """
