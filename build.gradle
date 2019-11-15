@@ -14,7 +14,7 @@ plugins {
     id 'maven-publish'
 
     // intershop version plugin
-    id 'com.intershop.gradle.scmversion' version '3.2.0'
+    id 'com.intershop.gradle.scmversion' version '6.0.0'
 
     // plugin for publishing to jcenter
     id 'com.jfrog.bintray' version '1.8.4'
@@ -35,7 +35,7 @@ if (project.version.endsWith('-SNAPSHOT')) {
 
 test {
     // Gradle versions for test
-    systemProperty 'intershop.gradle.versions', '4.4,4.9'
+    systemProperty 'intershop.gradle.versions', '5.6.4, 6.0'
     systemProperty 'intershop.test.base.dir', (new File(project.buildDir, 'test-working')).absolutePath
 }
 
@@ -181,7 +181,7 @@ bintray {
 bintrayUpload.dependsOn asciidoctor
 
 dependencies {
-    compile('org.spockframework:spock-core:1.1-groovy-2.4'){
+    compile('org.spockframework:spock-core:1.3-groovy-2.5'){
         exclude group: 'org.codehaus.groovy'
     }
 
