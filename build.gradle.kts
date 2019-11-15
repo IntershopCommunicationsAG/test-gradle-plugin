@@ -55,9 +55,10 @@ tasks {
         includeEmptyDirs = false
 
         val outputDir = file("$buildDir/tmp/asciidoctorSrc")
-        val inputFiles = fileTree(mapOf("dir" to rootDir,
-            "include" to listOf("**/*.asciidoc"),
-            "exclude" to listOf("build/**")))
+        val inputFiles = fileTree(rootDir) {
+            include("**/*.asciidoc")
+            exclude("build/**")
+        }
 
         inputs.files.plus( inputFiles )
         outputs.dir( outputDir )
