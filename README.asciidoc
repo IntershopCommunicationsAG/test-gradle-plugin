@@ -1,5 +1,5 @@
 = Gradle Test Plugin
-:latestRevision: 3.3.0
+:latestRevision: 3.4.0
 
 == Summary
 This library serves some functionality for Gradle plugin builds.
@@ -13,7 +13,7 @@ To use the Gradle Test Plugin, add the following lines to your build script:
 
     test {
         // Gradle versions for test
-        systemProperty 'intershop.gradle.versions', '3.5, 4.0'
+        systemProperty 'intershop.gradle.versions', '5.6, 6.0'
         systemProperty 'intershop.test.base.dir', (new File(project.buildDir, 'test-working')).absolutePath
     }
 
