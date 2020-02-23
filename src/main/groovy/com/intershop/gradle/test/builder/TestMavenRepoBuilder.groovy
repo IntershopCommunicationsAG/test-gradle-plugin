@@ -154,6 +154,14 @@ class TestMavenRepoBuilder extends BuilderSupport {
         String name
     }
 
+    static class DependencyManagement {
+        List<Dependency> dependencies = []
+    }
+
+    static class MvnProperties {
+        Map<String, String> pairs = [:]
+    }
+
     static class Project {
         String groupId = 'com.example'
         String artifactId
@@ -161,9 +169,11 @@ class TestMavenRepoBuilder extends BuilderSupport {
         String packaging = 'jar'
         String classifier
         Parent parent
+        DependencyManagement dependencyManagement
         List<Module> modules = []
         List<Artifact> artifacts = []
         List<Dependency> dependencies = []
+        MvnProperties mvnProperties
 
         def writeTo(File repoDir) {
             def projectDir = new File(repoDir, "${groupId.replace '.', '/'}/$artifactId/$version")
@@ -181,6 +191,36 @@ class TestMavenRepoBuilder extends BuilderSupport {
                 version(version)
                 if (packaging != 'jar')
                     packaging(packaging)
+
+                if(mvnProperties) {
+                    delegate.properties {
+                        mvnProperties.pairs.each { entry ->
+                            "${entry.key}" ( "${entry.value}" )
+                        }
+                    }
+                }
+
+                if (dependencyManagement) {
+                    dependencyManagement() {
+                        dependencies() {
+                            dependencyManagement.dependencies.each { dep ->
+                                dependency() {
+                                    groupId(dep.groupId)
+                                    artifactId(dep.artifactId)
+                                    version(dep.version)
+                                    if (dep.type != 'jar')
+                                        type(dep.type)
+                                    if (dep.classifier)
+                                        classifier(dep.classifier)
+                                    if (dep.scope)
+                                        scope(dep.scope)
+                                    if (dep.optional)
+                                        optional(dep.optional)
+                                }
+                            }
+                        }
+                    }
+                }
 
                 if (parent) {
                     parent() {
@@ -216,6 +256,7 @@ class TestMavenRepoBuilder extends BuilderSupport {
                     }
                 }
             }
+
             artifacts << new Artifact(ext: 'pom', content: pom)
 
             def artifactPrefix = "$artifactId-$version"
@@ -250,8 +291,9 @@ class TestMavenRepoBuilder extends BuilderSupport {
     }
 
     static
-    final methodClassMap = ['artifact': Artifact, 'dependency': Dependency, 'parent': Parent, 'project': Project, 'repository': Repository]
-
+    final methodClassMap = ['artifact': Artifact, 'dependency': Dependency, 'parent': Parent,
+                            'project': Project, 'repository': Repository, 'dependencyManagement': DependencyManagement,
+                            'mvnProperties': MvnProperties]
 
     @Override
     protected void setParent(parent, child) {
@@ -262,7 +304,22 @@ class TestMavenRepoBuilder extends BuilderSupport {
             return
         }
 
+        if (classes == [Project, MvnProperties]) {
+            parent.mvnProperties = child
+            return
+        }
+
         if (classes == [Project, Dependency]) {
+            parent.dependencies << child
+            return
+        }
+
+        if (classes == [Project, DependencyManagement]) {
+            parent.dependencyManagement = child
+            return
+        }
+
+        if (classes == [DependencyManagement, Dependency]) {
             parent.dependencies << child
             return
         }
@@ -304,6 +361,11 @@ class TestMavenRepoBuilder extends BuilderSupport {
 
 
         throw new IllegalArgumentException("Child of type ${child.getClass()} cannot have parent of type ${parent.getClass()}")
+    }
+
+    @Override
+    protected Object getName(String name) {
+        return name
     }
 
     @Override
