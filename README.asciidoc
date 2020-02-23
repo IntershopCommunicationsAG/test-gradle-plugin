@@ -1,5 +1,5 @@
 = Gradle Test Plugin
-:latestRevision: 3.4.0
+:latestRevision: 3.5.0
 
 == Summary
 This library serves some functionality for Gradle plugin builds.
