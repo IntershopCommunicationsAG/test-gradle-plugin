@@ -137,4 +137,21 @@ class AbstractIntegrationSpecSpec extends AbstractIntegrationSpec {
         new File(repoDir, 'com/intershop/component/component/1.1.2.3/component-1.1.2.3.pom').exists()
         new File(repoDir, 'com/intershop/component/component/2.1.2.3/component-2.1.2.3.pom').exists()
     }
+
+    def 'test MVN repo builder - dependencyManagement'() {
+        when:
+        File repoDir = new File(testProjectDir, 'build/mvnrepo')
+        new TestMavenRepoBuilder().repository {
+            project(artifactId:'component', groupId:'com.intershop.component', version: '1.1.2') {
+                mvnProperties pairs: [ "key1":"value1", "key2":"value2"]
+                dependencyManagement {
+                    dependency groupId: 'com.other', artifactId: 'library2', version: '1.0.0'
+                }
+            }
+        }.writeTo(repoDir)
+
+        then:
+        repoDir.exists()
+        new File(repoDir, 'com/intershop/component/component/1.1.2/component-1.1.2.pom').exists()
+    }
 }
