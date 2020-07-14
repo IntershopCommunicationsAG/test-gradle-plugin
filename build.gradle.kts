@@ -19,13 +19,13 @@ plugins {
     `maven-publish`
 
     // plugin for publishing to jcenter
-    id("com.jfrog.bintray") version "1.8.4"
+    id("com.jfrog.bintray") version "1.8.5"
 }
 
 group = "com.intershop.gradle.test"
 description = "Gradle test library - test extension for Gradle plugin builds"
 
-version = "3.5.0"
+version = "3.6.0"
 
 java {
     withJavadocJar()
@@ -47,7 +47,7 @@ tasks {
         testLogging.showStandardStreams = true
 
         // Gradle versions for test
-        systemProperty("intershop.gradle.versions", "5.6.4,6.0")
+        systemProperty("intershop.gradle.versions", "5.6.4,6.0,6.5")
         systemProperty("intershop.test.base.dir", (File(project.buildDir, "test-working")).absolutePath)
     }
 
