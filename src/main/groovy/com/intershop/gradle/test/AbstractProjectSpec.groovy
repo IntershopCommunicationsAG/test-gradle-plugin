@@ -73,27 +73,6 @@ abstract class AbstractProjectSpec extends Specification {
         noExceptionThrown()
     }
 
-    def 'apply is idempotent'() {
-        when:
-        plugin.apply(project)
-        plugin.apply(project)
-
-        then:
-        noExceptionThrown()
-    }
-
-    def 'apply is fine on all levels of multiproject'() {
-        given:
-        def sub = createSubproject(project, 'sub')
-        project.subprojects.add(sub)
-
-        when:
-        plugin.apply(project)
-        plugin.apply(sub)
-
-        then:
-        noExceptionThrown()
-    }
 
     def 'apply to multiple subprojects'() {
         given:
