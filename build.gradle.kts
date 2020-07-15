@@ -25,7 +25,7 @@ plugins {
 group = "com.intershop.gradle.test"
 description = "Gradle test library - test extension for Gradle plugin builds"
 
-version = "3.6.0"
+version = "3.7.0"
 
 java {
     withJavadocJar()
