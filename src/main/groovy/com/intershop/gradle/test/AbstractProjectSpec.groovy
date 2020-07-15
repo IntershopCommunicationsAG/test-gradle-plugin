@@ -73,28 +73,6 @@ abstract class AbstractProjectSpec extends Specification {
         noExceptionThrown()
     }
 
-
-    def 'apply to multiple subprojects'() {
-        given:
-        def subprojectNames = ['sub1', 'sub2', 'sub3']
-
-        subprojectNames.each { subprojectName ->
-            def subproject = createSubproject(project, subprojectName)
-            project.subprojects.add(subproject)
-        }
-
-        when:
-        plugin.apply(project)
-
-        subprojectNames.each { subprojectName ->
-            def subproject = project.subprojects.find { it.name == subprojectName }
-            plugin.apply(subproject)
-        }
-
-        then:
-        noExceptionThrown()
-    }
-
     /**
      * This method adds a sub project to the specified root/parent project.
      *
