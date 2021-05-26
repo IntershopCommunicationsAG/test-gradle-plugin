@@ -1,5 +1,13 @@
 = Gradle Test Plugin
-:latestRevision: 3.5.0
+:latestRevision: 4.0.0
+
+[CAUTION]
+====
+**Breaking Changes!**
+
+This library requires **Gradle >= 7** to work properly.
+Source and target compatibility of the library was changed to **Java 11**
+====
 
 == Summary
 This library serves some functionality for Gradle plugin builds.
@@ -13,14 +21,13 @@ To use the Gradle Test Plugin, add the following lines to your build script:
 
     test {
         // Gradle versions for test
-        systemProperty 'intershop.gradle.versions', '5.6, 6.0'
+        systemProperty 'intershop.gradle.versions', '7.0'
         systemProperty 'intershop.test.base.dir', (new File(project.buildDir, 'test-working')).absolutePath
     }
 
     dependencies {
-        classpath 'com.intershop.gradle.test:test-gradle-plugin:{latestRevision}'
+        testImplementation 'com.intershop.gradle.test:test-gradle-plugin:{latestRevision}'
     }
-}
 
 ----
 
@@ -122,11 +129,11 @@ class IntegrationPluginSpec extends AbstractIntegrationGroovySpec {
             group = 'com.test'
             version = '1.0.0'
 
-            sourceCompatibility = 1.7
-            targetCompatibility = 1.7
+            sourceCompatibility = 11
+            targetCompatibility = 11
 
             dependencies {
-                testCompile 'junit:junit:4.12'
+                testCompile 'junit:junit:4.13'
             }
 
             repositories {
@@ -157,7 +164,7 @@ For the use of the method `'supportedGradleVersions'` it is necessary to specify
 
 test {
     // Gradle versions for test
-    systemProperty 'intershop.gradle.versions', '2.11, 3.0'
+    systemProperty 'intershop.gradle.versions', '7.0'
     systemProperty 'intershop.test.base.dir', (new File(project.buildDir, 'test-working')).absolutePath
 }
 

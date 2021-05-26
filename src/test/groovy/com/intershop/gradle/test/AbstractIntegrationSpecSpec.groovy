@@ -17,10 +17,7 @@ package com.intershop.gradle.test
 
 import com.intershop.gradle.test.builder.TestIvyRepoBuilder
 import com.intershop.gradle.test.builder.TestMavenRepoBuilder
-import org.gradle.testkit.runner.GradleRunner
 import spock.lang.Unroll
-
-import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 @Unroll
 class AbstractIntegrationSpecSpec extends AbstractIntegrationSpec {
@@ -39,7 +36,7 @@ class AbstractIntegrationSpecSpec extends AbstractIntegrationSpec {
         List<String> versions = supportedGradleVersions
 
         then:
-        versions.size() > 1
+        versions.size() == 1
     }
 
     def 'create hello world file'() {

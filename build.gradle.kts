@@ -1,6 +1,4 @@
-import com.jfrog.bintray.gradle.BintrayExtension
 import org.asciidoctor.gradle.jvm.AsciidoctorTask
-import java.util.Date
 
 plugins {
     `java-library`
@@ -13,19 +11,21 @@ plugins {
     idea
 
     // plugin for documentation
-    id("org.asciidoctor.jvm.convert") version "2.3.0"
+    id("org.asciidoctor.jvm.convert") version "3.3.2"
 
     // publish plugin
     `maven-publish`
 
-    // plugin for publishing to jcenter
-    id("com.jfrog.bintray") version "1.8.5"
+    // artifact signing - necessary on Maven Central
+    signing
 }
 
 group = "com.intershop.gradle.test"
 description = "Gradle test library - test extension for Gradle plugin builds"
+version = "4.0.0"
 
-version = "3.7.0"
+val sonatypeUsername: String? by project
+val sonatypePassword: String? by project
 
 java {
     withJavadocJar()
@@ -33,8 +33,8 @@ java {
 }
 
 configure<JavaPluginConvention> {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 // set correct project status
@@ -43,12 +43,15 @@ if (project.version.toString().endsWith("-SNAPSHOT")) {
 }
 
 tasks {
+
     withType<Test>().configureEach {
         testLogging.showStandardStreams = true
 
         // Gradle versions for test
-        systemProperty("intershop.gradle.versions", "5.6.4,6.0,6.5")
+        systemProperty("intershop.gradle.versions", "7.0.2")
         systemProperty("intershop.test.base.dir", (File(project.buildDir, "test-working")).absolutePath)
+
+        useJUnitPlatform()
     }
 
     val copyAsciiDoc = register<Copy>("copyAsciiDoc") {
@@ -109,12 +112,7 @@ tasks {
         jacocoTestReport.dependsOn("test")
     }
 
-    withType<Test> {
-        dependsOn("jar")
-    }
-
-    getByName("bintrayUpload")?.dependsOn("asciidoctor")
-    getByName("publishToMavenLocal")?.dependsOn("asciidoctor")
+    getByName("jar")?.dependsOn("asciidoctor")
 }
 
 publishing {
@@ -135,7 +133,6 @@ publishing {
                 name.set(project.name)
                 description.set(project.description)
                 url.set("https://github.com/IntershopCommunicationsAG/${project.name}")
-
                 licenses {
                     license {
                         name.set("The Apache License, Version 2.0")
@@ -143,62 +140,57 @@ publishing {
                         distribution.set("repo")
                     }
                 }
-
+                organization {
+                    name.set("Intershop Communications AG")
+                    url.set("http://intershop.com")
+                }
+                developers {
+                    developer {
+                        id.set("m-raab")
+                        name.set("M. Raab")
+                        email.set("mraab@intershop.de")
+                    }
+                }
                 scm {
                     connection.set("https://github.com/IntershopCommunicationsAG/${project.name}.git")
                     developerConnection.set("git@github.com:IntershopCommunicationsAG/${project.name}.git")
                     url.set("https://github.com/IntershopCommunicationsAG/${project.name}")
                 }
-
-                organization {
-                    name.set("Intershop Communications AG")
-                    url.set("http://intershop.com")
-                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            val releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            val snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
+            url = uri(if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
+            credentials {
+                username = sonatypeUsername
+                password = sonatypePassword
             }
         }
     }
 }
 
-bintray {
-    user = System.getenv("BINTRAY_USER")
-    key = System.getenv("BINTRAY_KEY")
-
-    setPublications("intershopMvn")
-    pkg(delegateClosureOf<BintrayExtension.PackageConfig> {
-
-        repo = "GradlePlugins"
-        name = project.name
-        userOrg = "intershopcommunicationsag"
-
-        setLicenses("Apache-2.0")
-        vcsUrl = "https://github.com/IntershopCommunicationsAG/${project.name}"
-
-        desc = project.description
-        websiteUrl = "https://github.com/IntershopCommunicationsAG/${project.name}"
-        issueTrackerUrl = "https://github.com/IntershopCommunicationsAG/${project.name}/issues"
-
-        setLabels("intershop", "gradle", "plugin", "test")
-        publicDownloadNumbers = true
-
-        version(delegateClosureOf<BintrayExtension.VersionConfig> {
-            name = project.version.toString()
-            desc = "${project.description} ${project.version}"
-            released  = Date().toString()
-            vcsTag = project.version.toString()
-        })
-    })
+signing {
+    sign(publishing.publications["intershopMvn"])
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
-    api("org.spockframework:spock-core:1.3-groovy-2.5") {
+    api(platform("org.spockframework:spock-bom:2.0-groovy-3.0"))
+    api("org.spockframework:spock-core") {
         exclude(group = "org.codehaus.groovy")
     }
+    api("org.spockframework:spock-junit4")
+    api("commons-io:commons-io:2.8.0")
+    api("com.sun.xml.bind:jaxb-impl:3.0.0")
 
-    api("commons-io:commons-io:2.2")
+    implementation("jakarta.xml.bind:jakarta.xml.bind-api:3.0.0")
+    implementation("junit:junit:4.13.2")
 
     implementation(gradleTestKit())
 }
