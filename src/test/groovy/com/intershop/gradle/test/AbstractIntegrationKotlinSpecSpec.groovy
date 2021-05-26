@@ -8,6 +8,7 @@ import spock.lang.Unroll
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
+@Unroll
 class AbstractIntegrationKotlinSpecSpec extends AbstractIntegrationKotlinSpec {
 
     def 'create subproject'() {

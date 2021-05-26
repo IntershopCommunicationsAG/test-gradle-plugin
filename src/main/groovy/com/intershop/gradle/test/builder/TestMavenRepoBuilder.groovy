@@ -23,7 +23,7 @@ import java.security.MessageDigest
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-import static javax.xml.bind.DatatypeConverter.printHexBinary
+import static jakarta.xml.bind.DatatypeConverter.printHexBinary
 
 /**
  * A builder for creating local maven repositories.
@@ -201,7 +201,6 @@ class TestMavenRepoBuilder extends BuilderSupport {
                 }
 
                 if (dependencyManagement) {
-                    dependencyManagement() {
                         dependencies() {
                             dependencyManagement.dependencies.each { dep ->
                                 dependency() {
@@ -219,7 +218,6 @@ class TestMavenRepoBuilder extends BuilderSupport {
                                 }
                             }
                         }
-                    }
                 }
 
                 if (parent) {
