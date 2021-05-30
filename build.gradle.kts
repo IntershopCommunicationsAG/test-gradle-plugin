@@ -22,7 +22,7 @@ plugins {
 
 group = "com.intershop.gradle.test"
 description = "Gradle test library - test extension for Gradle plugin builds"
-version = "4.0.0"
+version = "4.1.0"
 
 val sonatypeUsername: String? by project
 val sonatypePassword: String? by project
@@ -33,8 +33,8 @@ java {
 }
 
 configure<JavaPluginConvention> {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 // set correct project status
@@ -46,6 +46,10 @@ tasks {
 
     withType<Test>().configureEach {
         testLogging.showStandardStreams = true
+
+        this.javaLauncher.set( project.javaToolchains.launcherFor {
+            languageVersion.set(JavaLanguageVersion.of(11))
+        })
 
         // Gradle versions for test
         systemProperty("intershop.gradle.versions", "7.0.2")

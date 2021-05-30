@@ -1,12 +1,11 @@
 = Gradle Test Plugin
-:latestRevision: 4.0.0
+:latestRevision: 4.1.0
 
 [CAUTION]
 ====
 **Breaking Changes!**
 
 This library requires **Gradle >= 7** to work properly.
-Source and target compatibility of the library was changed to **Java 11**
 ====
 
 == Summary
