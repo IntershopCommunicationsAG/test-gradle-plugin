@@ -22,7 +22,7 @@ plugins {
 
 group = "com.intershop.gradle.test"
 description = "Gradle test library - test extension for Gradle plugin builds"
-version = "4.1.0"
+version = "4.1.1"
 
 val sonatypeUsername: String? by project
 val sonatypePassword: String? by project
