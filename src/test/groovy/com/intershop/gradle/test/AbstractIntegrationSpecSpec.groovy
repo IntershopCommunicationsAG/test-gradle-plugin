@@ -150,5 +150,6 @@ class AbstractIntegrationSpecSpec extends AbstractIntegrationSpec {
         then:
         repoDir.exists()
         new File(repoDir, 'com/intershop/component/component/1.1.2/component-1.1.2.pom').exists()
+        new File(repoDir, 'com/intershop/component/component/1.1.2/component-1.1.2.pom').text.contains("dependencyManagement")
     }
 }

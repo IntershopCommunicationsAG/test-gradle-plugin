@@ -201,6 +201,7 @@ class TestMavenRepoBuilder extends BuilderSupport {
                 }
 
                 if (dependencyManagement) {
+                    delegate.dependencyManagement {
                         dependencies() {
                             dependencyManagement.dependencies.each { dep ->
                                 dependency() {
@@ -218,6 +219,7 @@ class TestMavenRepoBuilder extends BuilderSupport {
                                 }
                             }
                         }
+                    }
                 }
 
                 if (parent) {
