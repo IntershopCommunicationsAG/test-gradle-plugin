@@ -1,5 +1,22 @@
 import org.asciidoctor.gradle.jvm.AsciidoctorTask
 
+/*
+ * Copyright 2022 Intershop Communications AG.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 plugins {
     `java-library`
     // project plugins
@@ -22,7 +39,7 @@ plugins {
 
 group = "com.intershop.gradle.test"
 description = "Gradle test library - test extension for Gradle plugin builds"
-version = "4.1.1"
+version = "4.1.2"
 
 val sonatypeUsername: String? by project
 val sonatypePassword: String? by project
@@ -52,7 +69,7 @@ tasks {
         })
 
         // Gradle versions for test
-        systemProperty("intershop.gradle.versions", "7.0.2")
+        systemProperty("intershop.gradle.versions", "7.2,7.5.1")
         systemProperty("intershop.test.base.dir", (File(project.buildDir, "test-working")).absolutePath)
 
         useJUnitPlatform()
@@ -106,10 +123,9 @@ tasks {
 
     withType<JacocoReport> {
         reports {
-            xml.isEnabled = true
-            html.isEnabled = true
-
-            html.destination = File(project.buildDir, "jacocoHtml")
+            xml.required.set(true)
+            html.required.set(true)
+            html.outputLocation.set(File(project.buildDir, "jacocoHtml"))
         }
 
         val jacocoTestReport by tasks
@@ -185,15 +201,15 @@ repositories {
 }
 
 dependencies {
-    api(platform("org.spockframework:spock-bom:2.0-groovy-3.0"))
+    api(platform("org.spockframework:spock-bom:2.1-groovy-3.0"))
     api("org.spockframework:spock-core") {
         exclude(group = "org.codehaus.groovy")
     }
     api("org.spockframework:spock-junit4")
-    api("commons-io:commons-io:2.8.0")
-    api("com.sun.xml.bind:jaxb-impl:3.0.0")
+    api("commons-io:commons-io:2.11.0")
+    api("com.sun.xml.bind:jaxb-impl:4.0.0")
 
-    implementation("jakarta.xml.bind:jakarta.xml.bind-api:3.0.0")
+    implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.0")
     implementation("junit:junit:4.13.2")
 
     implementation(gradleTestKit())
