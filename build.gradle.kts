@@ -45,37 +45,29 @@ val sonatypeUsername: String? by project
 val sonatypePassword: String? by project
 
 java {
-    withJavadocJar()
-    withSourcesJar()
-}
-
-configure<JavaPluginConvention> {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
 // set correct project status
 if (project.version.toString().endsWith("-SNAPSHOT")) {
     status = "snapshot'"
 }
-
+val buildDir = project.layout.buildDirectory.asFile.get()
 tasks {
 
     withType<Test>().configureEach {
         testLogging.showStandardStreams = true
 
-        this.javaLauncher.set( project.javaToolchains.launcherFor {
-            languageVersion.set(JavaLanguageVersion.of(11))
-        })
-
         // Gradle versions for test
-        systemProperty("intershop.gradle.versions", "7.2,7.5.1")
-        systemProperty("intershop.test.base.dir", (File(project.buildDir, "test-working")).absolutePath)
+        systemProperty("intershop.gradle.versions", "7.2,7.5.1,8.4")
+        systemProperty("intershop.test.base.dir", (File(buildDir, "test-working")).absolutePath)
 
         useJUnitPlatform()
     }
 
-    val copyAsciiDoc = register<Copy>("copyAsciiDoc") {
+    register<Copy>("copyAsciiDoc") {
         includeEmptyDirs = false
 
         val outputDir = file("$buildDir/tmp/asciidoctorSrc")
@@ -125,14 +117,14 @@ tasks {
         reports {
             xml.required.set(true)
             html.required.set(true)
-            html.outputLocation.set(File(project.buildDir, "jacocoHtml"))
+            html.outputLocation.set(File(buildDir, "jacocoHtml"))
         }
 
         val jacocoTestReport by tasks
         jacocoTestReport.dependsOn("test")
     }
 
-    getByName("jar")?.dependsOn("asciidoctor")
+    getByName("jar").dependsOn("asciidoctor")
 }
 
 publishing {
@@ -201,15 +193,16 @@ repositories {
 }
 
 dependencies {
-    api(platform("org.spockframework:spock-bom:2.1-groovy-3.0"))
+    api(platform("org.spockframework:spock-bom:2.3-groovy-3.0"))
     api("org.spockframework:spock-core") {
+        exclude(group = "org.apache.groovy")
         exclude(group = "org.codehaus.groovy")
     }
     api("org.spockframework:spock-junit4")
-    api("commons-io:commons-io:2.11.0")
-    api("com.sun.xml.bind:jaxb-impl:4.0.0")
-
-    implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.0")
+    api("commons-io:commons-io:2.14.0")
+    api("com.sun.xml.bind:jaxb-impl:4.0.3")
+    //implementation("org.codehaus.groovy:groovy-all:3.0.19")
+    implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.1")
     implementation("junit:junit:4.13.2")
 
     implementation(gradleTestKit())
