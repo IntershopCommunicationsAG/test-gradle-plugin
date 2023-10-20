@@ -195,13 +195,11 @@ repositories {
 dependencies {
     api(platform("org.spockframework:spock-bom:2.3-groovy-3.0"))
     api("org.spockframework:spock-core") {
-        exclude(group = "org.apache.groovy")
         exclude(group = "org.codehaus.groovy")
     }
     api("org.spockframework:spock-junit4")
     api("commons-io:commons-io:2.14.0")
     api("com.sun.xml.bind:jaxb-impl:4.0.3")
-    //implementation("org.codehaus.groovy:groovy-all:3.0.19")
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.1")
     implementation("junit:junit:4.13.2")
 
