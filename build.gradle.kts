@@ -200,9 +200,13 @@ dependencies {
     api("org.spockframework:spock-junit4")
     api("commons-io:commons-io:2.14.0")
     api("com.sun.xml.bind:jaxb-impl:4.0.3")
+    api("net.bytebuddy:byte-buddy:1.14.9")
+    api("net.bytebuddy:byte-buddy-agent:1.14.9")
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.1")
     implementation("junit:junit:4.13.2")
 
     implementation(gradleTestKit())
+
+
 }
 
