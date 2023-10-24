@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup
-        uses: IntershopCommunicationsAG/.github/actions/gradle-plugin-base@v0.1
+        uses: IntershopCommunicationsAG/.github/actions/gradle-plugin-setup@v0.3
         with:
           signing-file: ${{ secrets.SIGNINGFILE }}
           signing-key-id: ${{ secrets.SIGNINGKEYID }}
@@ -30,4 +30,4 @@ jobs:
           sonatype-user: ${{ secrets.SONATYPEUSER }}
           sonatype-password: ${{ secrets.SONATYPEPASSWORD }}
       - name: Build
-        uses: IntershopCommunicationsAG/.github/actions/gradle-plugin-build@v0.1
+        uses: IntershopCommunicationsAG/.github/actions/gradle-plugin-build@v0.3
