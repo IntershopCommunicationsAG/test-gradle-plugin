@@ -19,11 +19,15 @@ jobs:
     environment: CIRelease
     runs-on: ubuntu-latest
     steps:
-      - name: Build
-        uses: IntershopCommunicationsAG/.github/actions/gradle-plugin-build@v0
+      - name: Setup
+        uses: IntershopCommunicationsAG/.github/actions/gradle-plugin-base@v0.1
         with:
           signing-file: ${{ secrets.SIGNINGFILE }}
           signing-key-id: ${{ secrets.SIGNINGKEYID }}
           signing-password: ${{ secrets.SIGNINGPASSWORD }}
           api-key: ${{ secrets.APIKEY }}
           api-secret: ${{ secrets.APISECRET }}
+          sonatype-user: ${{ secrets.SONATYPEUSER }}
+          sonatype-password: ${{ secrets.SONATYPEPASSWORD }}
+      - name: Build
+        uses: IntershopCommunicationsAG/.github/actions/gradle-plugin-build@v0.1
