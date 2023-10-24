@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Build
-        uses: IntershopCommunicationsAG/.github/actions/gradle-plugin-build
+        uses: IntershopCommunicationsAG/.github/actions/gradle-plugin-build@v0
         with:
           signing-file: ${{ secrets.SIGNINGFILE }}
           signing-key-id: ${{ secrets.SIGNINGKEYID }}
