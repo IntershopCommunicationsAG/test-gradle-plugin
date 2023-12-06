@@ -39,7 +39,7 @@ plugins {
 
 group = "com.intershop.gradle.test"
 description = "Gradle test library - test extension for Gradle plugin builds"
-version = "4.1.2"
+version = "5.0.0"
 
 val sonatypeUsername: String? by project
 val sonatypePassword: String? by project
@@ -54,43 +54,44 @@ java {
 if (project.version.toString().endsWith("-SNAPSHOT")) {
     status = "snapshot'"
 }
-val buildDir = project.layout.buildDirectory.asFile.get()
+
 tasks {
 
     withType<Test>().configureEach {
         testLogging.showStandardStreams = true
 
         // Gradle versions for test
-        systemProperty("intershop.gradle.versions", "7.2,7.5.1,8.4")
-        systemProperty("intershop.test.base.dir", (File(buildDir, "test-working")).absolutePath)
+        systemProperty("intershop.gradle.versions", "8.4,8.5")
+        systemProperty("intershop.test.base.dir", project.layout.buildDirectory.dir("test-working").get().asFile.absolutePath)
 
         useJUnitPlatform()
     }
 
+    val asciidoctorSrc = project.layout.buildDirectory.dir("/tmp/asciidoctorSrc")
+
     register<Copy>("copyAsciiDoc") {
         includeEmptyDirs = false
 
-        val outputDir = file("$buildDir/tmp/asciidoctorSrc")
         val inputFiles = fileTree(rootDir) {
             include("**/*.asciidoc")
             exclude("build/**")
         }
 
         inputs.files.plus( inputFiles )
-        outputs.dir( outputDir )
+        outputs.dir( asciidoctorSrc )
 
         doFirst {
-            outputDir.mkdir()
+            asciidoctorSrc.get().asFile.mkdir()
         }
 
         from(inputFiles)
-        into(outputDir)
+        into(asciidoctorSrc)
     }
 
     withType<AsciidoctorTask> {
         dependsOn("copyAsciiDoc")
 
-        setSourceDir(file("$buildDir/tmp/asciidoctorSrc"))
+        setSourceDir(asciidoctorSrc)
         sources(delegateClosureOf<PatternSet> {
             include("README.asciidoc")
         })
@@ -99,10 +100,12 @@ tasks {
             setBackends(listOf("html5", "docbook"))
         }
 
-        options = mapOf( "doctype" to "article",
-            "ruby"    to "erubis")
+        options = mapOf(
+            "doctype"               to "article",
+            "ruby"                  to "erubis"
+        )
         attributes = mapOf(
-            "latestRevision"        to  project.version,
+            "latestRevision"        to project.version,
             "toc"                   to "left",
             "toclevels"             to "2",
             "source-highlighter"    to "coderay",
@@ -110,14 +113,15 @@ tasks {
             "setanchors"            to "true",
             "idprefix"              to "asciidoc",
             "idseparator"           to "-",
-            "docinfo1"              to "true")
+            "docinfo1"              to "true"
+        )
     }
 
     withType<JacocoReport> {
         reports {
             xml.required.set(true)
             html.required.set(true)
-            html.outputLocation.set(File(buildDir, "jacocoHtml"))
+            html.outputLocation.set(project.layout.buildDirectory.dir("jacocoHtml"))
         }
 
         val jacocoTestReport by tasks
@@ -133,11 +137,11 @@ publishing {
 
             from(components["java"])
 
-            artifact(File(buildDir, "docs/asciidoc/html5/README.html")) {
+            artifact(project.layout.buildDirectory.file("docs/asciidoc/html5/README.html")) {
                 classifier = "reference"
             }
 
-            artifact(File(buildDir, "docs/asciidoc/docbook/README.xml")) {
+            artifact(project.layout.buildDirectory.file("docs/asciidoc/docbook/README.xml")) {
                 classifier = "docbook"
             }
 
