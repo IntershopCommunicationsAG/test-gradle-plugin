@@ -5,7 +5,7 @@
 ====
 **Breaking Changes!**
 
-This library requires **Gradle >= 7** to work properly.
+This library requires **Gradle >= 8.4** to work properly.
 ====
 
 == Summary
@@ -15,17 +15,20 @@ It contains some helper classes, methods and a Spock extension 'TestDir' for tes
 == Usage
 To use the Gradle Test Plugin, add the following lines to your build script:
 
-[source,groovy,subs="attributes"]
+[source,kotlin,subs="attributes"]
 ----
 
-    test {
-        // Gradle versions for test
-        systemProperty 'intershop.gradle.versions', '7.0'
-        systemProperty 'intershop.test.base.dir', (new File(project.buildDir, 'test-working')).absolutePath
+    tasks {
+        withType<Test>().configureEach {
+            //Set supported Gradle version
+            systemProperty("intershop.gradle.versions", "8.4,8.5")
+            //working dir for tests
+            systemProperty("intershop.test.base.dir", project.layout.buildDirectory.get().dir("test-working").asFile.absolutePath)
+        }
     }
 
     dependencies {
-        testImplementation 'com.intershop.gradle.test:test-gradle-plugin:{latestRevision}'
+        testImplementation("com.intershop.gradle.test:test-gradle-plugin:{latestRevision}")
     }
 
 ----
