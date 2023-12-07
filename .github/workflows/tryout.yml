@@ -19,4 +19,7 @@ jobs:
               id: get_version
               run: |
                 echo GITHUB_REF=${GITHUB_REF}
-                echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+                echo "PROJECT_VERSION=${GITHUB_REF/refs\/tags\//}" >> "$GITHUB_ENV"
+            - name: Print the version
+              run: |
+                  echo PROJECT_VERSION=${PROJECT_VERSION}
