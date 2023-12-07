@@ -26,12 +26,12 @@ jobs:
             - name: Create gradle properties
               shell: bash
               env:
-                  APIKEY: ${{ inputs.api-key }}
-                  APISECRET: ${{ inputs.api-secret }}
-                  SIGNINGKEYID: ${{ inputs.signing-key-id }}
-                  SIGNINGPASSWORD: ${{ inputs.signing-password }}
-                  SONATYPEUSER: ${{ inputs.sonatype-user }}
-                  SONATYPEPASSWORD: ${{ inputs.sonatype-password }}
+                  APIKEY: ${{ secrets.APIKEY }}
+                  APISECRET: ${{ secrets.APISECRET }}
+                  SIGNINGKEYID: ${{ secrets.SIGNINGKEYID }}
+                  SIGNINGPASSWORD: ${{ secrets.SIGNINGPASSWORD }}
+                  SONATYPEUSER: ${{ secrets.SONATYPEUSER }}
+                  SONATYPEPASSWORD: ${{ secrets.SONATYPEPASSWORD }}
               run: echo -e "gradle.publish.key=$APIKEY\ngradle.publish.secret=$APISECRET\nsigning.keyId=$SIGNINGKEYID\nsigning.password=$SIGNINGPASSWORD\nsigning.secretKeyRingFile=$HOME/.gradle/secrets.gpg\nsonatypeUsername=$SONATYPEUSER\nsonatypePassword=$SONATYPEPASSWORD" > $HOME/.gradle/gradle.properties
             - name: Run gradle release
               shell: bash
