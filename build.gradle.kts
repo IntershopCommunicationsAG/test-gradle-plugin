@@ -39,7 +39,11 @@ plugins {
 
 group = "com.intershop.gradle.test"
 description = "Gradle test library - test extension for Gradle plugin builds"
-version = "LOCAL" // actual version is set by .github/workflows/release.yml
+// apply gradle property 'projectVersion' to project.version, default to 'LOCAL'
+val projectVersion : String? by project
+version = projectVersion ?: "LOCAL"
+
+println("!!!kiese ${project.version}")
 
 val sonatypeUsername: String? by project
 val sonatypePassword: String? by project
