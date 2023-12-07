@@ -23,6 +23,20 @@ jobs:
             - name: Print the version
               run: |
                   echo PROJECT_VERSION=${PROJECT_VERSION}
+            - name: Install gpg secret key
+              shell: bash
+              env:
+                  SIGNINGFILE: ${{ secrets.SIGNINGFILE }}
+              run: |
+                  cat <(echo -e "$SIGNINGFILE") | gpg --batch --import
+                  gpg --list-secret-keys --keyid-format LONG
+            - name: Export gpg file
+              shell: bash
+              env:
+                  SIGNINGKEYID: ${{ secrets.SIGNINGKEYID }}
+                  SIGNINGPASSWORD: ${{ secrets.SIGNINGPASSWORD }}
+              run: |
+                  gpg --batch --passphrase="$SIGNINGPASSWORD" --pinentry-mode loopback --export-secret-keys $SIGNINGKEYID > $HOME/.gradle/secrets.gpg
             - name: Create gradle properties
               shell: bash
               env:
