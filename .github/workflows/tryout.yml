@@ -1,5 +1,9 @@
 name: tryout
 
+on:
+    push:
+        branches:
+            - '**'
 jobs:
     build:
         permissions:
