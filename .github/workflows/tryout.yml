@@ -18,8 +18,11 @@ jobs:
             - name: Get the version
               id: get_version
               run: |
-                echo GITHUB_REF=${GITHUB_REF}
-                echo "PROJECT_VERSION=${GITHUB_REF/refs\/tags\//}" >> "$GITHUB_ENV"
+                echo GITHUB_REF=${GITHUB_REF_NAME}
+                echo "PROJECT_VERSION=${GITHUB_REF_NAME/refs\/tags\//}" >> "$GITHUB_ENV"
             - name: Print the version
               run: |
                   echo PROJECT_VERSION=${PROJECT_VERSION}
+            - name: Run gradle release
+              shell: bash
+              run: ./gradlew -Pversion=${{ github.ref_name }} pTML -s --scan

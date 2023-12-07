@@ -39,7 +39,7 @@ plugins {
 
 group = "com.intershop.gradle.test"
 description = "Gradle test library - test extension for Gradle plugin builds"
-version = "5.0.0"
+version = "LOCAL" // actual version is set by .github/workflows/release.yml
 
 val sonatypeUsername: String? by project
 val sonatypePassword: String? by project
