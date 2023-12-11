@@ -43,14 +43,12 @@ description = "Gradle test library - test extension for Gradle plugin builds"
 val projectVersion : String? by project
 version = projectVersion ?: "LOCAL"
 
-println("!!!kiese ${project.version}")
-
 val sonatypeUsername: String? by project
 val sonatypePassword: String? by project
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
 
