@@ -20,6 +20,6 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Setup
-              uses: IntershopCommunicationsAG/.github/actions/gradle-plugin-setup@main
+              uses: IntershopCommunicationsAG/.github/actions/gradle-plugin-setup@v0.5
             - name: Build
-              uses: IntershopCommunicationsAG/.github/actions/gradle-plugin-build@main
+              uses: IntershopCommunicationsAG/.github/actions/gradle-plugin-build@v0.5
