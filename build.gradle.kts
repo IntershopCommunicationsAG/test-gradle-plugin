@@ -47,6 +47,8 @@ val sonatypeUsername: String? by project
 val sonatypePassword: String? by project
 
 java {
+    withJavadocJar()
+    withSourcesJar()
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(17))
     }
