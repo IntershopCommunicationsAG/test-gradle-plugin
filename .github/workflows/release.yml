@@ -17,7 +17,7 @@ jobs:
             - name: Setup
               uses: IntershopCommunicationsAG/.github/actions/gradle-plugin-setup@v0.5
             - name: Release
-              uses: IntershopCommunicationsAG/.github/actions/gradle-plugin-release@v0.5
+              uses: IntershopCommunicationsAG/.github/actions/gradle-plugin-release@v0.6
               with:
                   signing-file: ${{ secrets.SIGNINGFILE }}
                   signing-key-id: ${{ secrets.SIGNINGKEYID }}
@@ -26,3 +26,4 @@ jobs:
                   api-secret: ${{ secrets.APISECRET }}
                   sonatype-user: ${{ secrets.SONATYPEUSER }}
                   sonatype-password: ${{ secrets.SONATYPEPASSWORD }}
+                  publish-tasks: publishIntershopMvnPublicationToMavenRepository
