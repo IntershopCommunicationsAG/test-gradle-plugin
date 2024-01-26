@@ -360,6 +360,10 @@ For more information see assigned Groovy doc.
 
 For more information please check the provided Java doc.
 
+== Contribute
+
+See link:https://github.com/IntershopCommunicationsAG/.github/blob/main/CONTRIBUTE.asciidoc[here] for details.
+
 == License
 
 Copyright 2014-2016 Intershop Communications.
