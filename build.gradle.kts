@@ -28,7 +28,7 @@ plugins {
     idea
 
     // plugin for documentation
-    id("org.asciidoctor.jvm.convert") version "3.3.2"
+    id("org.asciidoctor.jvm.convert") version "4.0.3"
 
     // publish plugin
     `maven-publish`
@@ -65,7 +65,7 @@ tasks {
         testLogging.showStandardStreams = true
 
         // Gradle versions for test
-        systemProperty("intershop.gradle.versions", "8.4,8.5")
+        systemProperty("intershop.gradle.versions", "8.4,8.5,8.10.2")
         systemProperty("intershop.test.base.dir", project.layout.buildDirectory.dir("test-working").get().asFile.absolutePath)
 
         useJUnitPlatform()
@@ -104,11 +104,11 @@ tasks {
             setBackends(listOf("html5", "docbook"))
         }
 
-        options = mapOf(
+        setOptions(mapOf(
             "doctype"               to "article",
             "ruby"                  to "erubis"
-        )
-        attributes = mapOf(
+        ))
+        setAttributes(mapOf(
             "latestRevision"        to project.version,
             "toc"                   to "left",
             "toclevels"             to "2",
@@ -118,7 +118,7 @@ tasks {
             "idprefix"              to "asciidoc",
             "idseparator"           to "-",
             "docinfo1"              to "true"
-        )
+        ))
     }
 
     withType<JacocoReport> {
@@ -206,9 +206,9 @@ dependencies {
         exclude(group = "org.codehaus.groovy")
     }
     api("org.spockframework:spock-junit4")
-    api("commons-io:commons-io:2.14.0")
-    api("com.sun.xml.bind:jaxb-impl:4.0.3")
-    implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.1")
+    api("commons-io:commons-io:2.17.0")
+    api("com.sun.xml.bind:jaxb-impl:4.0.5")
+    implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.2")
     implementation("junit:junit:4.13.2")
 
     implementation(gradleTestKit())
