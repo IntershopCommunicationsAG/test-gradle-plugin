@@ -65,7 +65,7 @@ tasks {
         testLogging.showStandardStreams = true
 
         // Gradle versions for test
-        systemProperty("intershop.gradle.versions", "8.4,8.5")
+        systemProperty("intershop.gradle.versions", "8.4,8.5,8.10.2")
         systemProperty("intershop.test.base.dir", project.layout.buildDirectory.dir("test-working").get().asFile.absolutePath)
 
         useJUnitPlatform()
