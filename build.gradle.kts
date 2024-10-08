@@ -206,9 +206,9 @@ dependencies {
         exclude(group = "org.codehaus.groovy")
     }
     api("org.spockframework:spock-junit4")
-    api("commons-io:commons-io:2.14.0")
-    api("com.sun.xml.bind:jaxb-impl:4.0.3")
-    implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.1")
+    api("commons-io:commons-io:2.17.0")
+    api("com.sun.xml.bind:jaxb-impl:4.0.5")
+    implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.2")
     implementation("junit:junit:4.13.2")
 
     implementation(gradleTestKit())
