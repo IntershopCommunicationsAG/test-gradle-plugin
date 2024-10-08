@@ -28,7 +28,7 @@ plugins {
     idea
 
     // plugin for documentation
-    id("org.asciidoctor.jvm.convert") version "3.3.2"
+    id("org.asciidoctor.jvm.convert") version "4.0.3"
 
     // publish plugin
     `maven-publish`
@@ -104,11 +104,11 @@ tasks {
             setBackends(listOf("html5", "docbook"))
         }
 
-        options = mapOf(
+        setOptions(mapOf(
             "doctype"               to "article",
             "ruby"                  to "erubis"
-        )
-        attributes = mapOf(
+        ))
+        setAttributes(mapOf(
             "latestRevision"        to project.version,
             "toc"                   to "left",
             "toclevels"             to "2",
@@ -118,7 +118,7 @@ tasks {
             "idprefix"              to "asciidoc",
             "idseparator"           to "-",
             "docinfo1"              to "true"
-        )
+        ))
     }
 
     withType<JacocoReport> {
