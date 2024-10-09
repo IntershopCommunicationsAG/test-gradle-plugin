@@ -19,6 +19,7 @@ import org.asciidoctor.gradle.jvm.AsciidoctorTask
 
 plugins {
     `java-library`
+    `jvm-test-suite`
     // project plugins
     groovy
     // test coverage
@@ -59,18 +60,32 @@ if (project.version.toString().endsWith("-SNAPSHOT")) {
     status = "snapshot'"
 }
 
-tasks {
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useSpock()
 
-    withType<Test>().configureEach {
-        testLogging.showStandardStreams = true
+            dependencies {
+                implementation(gradleTestKit())
+            }
 
-        // Gradle versions for test
-        systemProperty("intershop.gradle.versions", "8.4,8.5,8.10.2")
-        systemProperty("intershop.test.base.dir", project.layout.buildDirectory.dir("test-working").get().asFile.absolutePath)
-
-        useJUnitPlatform()
+            targets {
+                all {
+                    testTask.configure {
+                        // Gradle versions for test
+                        systemProperty("intershop.gradle.versions", "8.4,8.5,8.10.2")
+                        systemProperty("intershop.test.base.dir", project.layout.buildDirectory.dir("test-working").get().asFile.absolutePath)
+                        options {
+                            testLogging.showStandardStreams = true
+                        }
+                    }
+                }
+            }
+        }
     }
+}
 
+tasks {
     val asciidoctorSrc = project.layout.buildDirectory.dir("/tmp/asciidoctorSrc")
 
     register<Copy>("copyAsciiDoc") {

@@ -15,11 +15,7 @@
  */
 package com.intershop.gradle.test
 
-import com.intershop.gradle.test.util.TestDir
 import groovy.util.logging.Slf4j
-import org.apache.commons.io.FileUtils
-import org.gradle.testkit.runner.GradleRunner
-import spock.lang.Specification
 
 /**
  * This abstract spec implements a special
