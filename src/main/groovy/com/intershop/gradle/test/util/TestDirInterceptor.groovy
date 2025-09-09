@@ -17,12 +17,7 @@ package com.intershop.gradle.test.util
 
 import groovy.transform.CompileStatic
 import groovy.transform.TypeCheckingMode
-
-import java.nio.file.FileVisitResult
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.SimpleFileVisitor
-import java.nio.file.attribute.BasicFileAttributes
+import org.apache.commons.io.FileUtils
 
 import org.spockframework.runtime.extension.AbstractMethodInterceptor
 import org.spockframework.runtime.extension.IMethodInvocation
@@ -57,82 +52,59 @@ class TestDirInterceptor extends AbstractMethodInterceptor
      *
      * @param directory directory to delete
      * @return directory deleted
-     */    
+     */
     private File deleteUsingJava ( File directory )
     {
-        Files.walkFileTree(directory.toPath(), new SimpleFileVisitor<Path>()
-                {
-                    @Override
-                    FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-                    {
-                        Files.delete(file)
-                        return FileVisitResult.CONTINUE
-                    }
-
-                    @Override
-                    FileVisitResult postVisitDirectory(Path dir, IOException exc)
-                    {
-                        if (exc == null)
-                        {
-                            Files.delete(dir)
-                            return FileVisitResult.CONTINUE
-                        }
-                        else
-                        {
-                            // directory iteration failed; propagate exception
-                            throw exc
-                        }
-                    }
-                })
+        FileUtils.deleteDirectory(directory)
 
         assert !directory.exists()
         directory
     }
-   
+
     private void deleteUsingOSOnWindows ( File directory )
     {
         println "Deleting directory '${directory}' using rmdir..."
-        
+
         def rmDirProc = ['cmd', '/c', "\"rmdir /S /Q ${directory.absolutePath}\""].execute()
         StreamGobbler errorGobbler = new StreamGobbler(rmDirProc.getErrorStream());
         StreamGobbler outputGobbler = new StreamGobbler(rmDirProc.getInputStream());
         errorGobbler.start();
         outputGobbler.start();
-        
+
         int returnCode = rmDirProc.waitFor()
-        
+
         if (returnCode || directory.exists()) {
             throw new RuntimeException("Unable to delete directory '${directory.absolutePath}' using rmdir. Return code: ${returnCode}.")
         }
-        
-        println "Done deleting directory '${directory}' using rmdir."                     
+
+        println "Done deleting directory '${directory}' using rmdir."
     }
 
     private void deleteUsingOSOnLinux ( File directory )
     {
         println "Deleting directory '${directory}' using rm -rf..."
-                      
+
         def rmDirProc = ['sh', '-c', "rm -rf \"${directory.absolutePath}\""].execute()
         StreamGobbler errorGobbler = new StreamGobbler(rmDirProc.getErrorStream());
         StreamGobbler outputGobbler = new StreamGobbler(rmDirProc.getInputStream());
         errorGobbler.start();
         outputGobbler.start();
-        
+
         int returnCode = rmDirProc.waitFor()
-        
+
         if (returnCode || directory.exists()) {
             throw new RuntimeException("Unable to delete directory '${directory.absolutePath}' using rm -rf. Return code: ${returnCode}.")
         }
-                
+
         println "Done deleting directory '${directory}' using rm -rf."
     }
-    
-    
+
+
     @CompileStatic(TypeCheckingMode.SKIP)
-    private void setupTestDir (testDirName, specInstance, IMethodInvocation invocation) 
-    {         
+    private void setupTestDir (testDirName, specInstance, IMethodInvocation invocation)
+    {
         File  testDir = new File(baseDir, testDirName ).canonicalFile
-        
+
         if ( testDir.directory )
         {
             // Cleaning directory
@@ -143,16 +115,16 @@ class TestDirInterceptor extends AbstractMethodInterceptor
                         deleteUsingOSOnWindows testDir
                     } else {
                         deleteUsingOSOnLinux testDir
-                    }                               
+                    }
                 } else {
                     deleteUsingJava testDir
                 }
-                
+
             }
             else
             {
-                if (!overwrite) 
-                {                
+                if (!overwrite)
+                {
                     // Creating new directory next to existing one
                     for ( int counter = 1; testDir.directory; counter++ )
                     {
@@ -161,28 +133,28 @@ class TestDirInterceptor extends AbstractMethodInterceptor
                 }
             }
         }
-        
-        if (!testDir.exists()) {        
+
+        if (!testDir.exists()) {
             assert testDir.mkdirs(), "Failed to create test directory [$testDir]"
         }
-                
+
         specInstance."$fieldName"         = testDir
         assert specInstance."$fieldName" == testDir
         invocation.proceed()
     }
-    
-    @Override    
+
+    @Override
     void interceptSetupMethod ( IMethodInvocation invocation )
     {
         if (shared) {
             invocation.proceed()
             return;
         }
-        
+
         final specInstance = invocation.instance
         String testDirName
-        
-        if (invocation.feature.parameterized) 
+
+        if (invocation.feature.parameterized)
         {
             testDirName  = "${ specInstance.class.simpleName }/${ invocation.iteration.name.replaceAll( /\W+/, '-' ) }"
         }
@@ -190,10 +162,10 @@ class TestDirInterceptor extends AbstractMethodInterceptor
         {
             testDirName  = "${ specInstance.class.simpleName }/${ invocation.feature.name.replaceAll( /\W+/, '-' ) }"
         }
-        
-        setupTestDir(testDirName, specInstance, invocation)        
+
+        setupTestDir(testDirName, specInstance, invocation)
     }
-    
+
     @Override
     void interceptSetupSpecMethod ( IMethodInvocation invocation )
     {
@@ -201,7 +173,7 @@ class TestDirInterceptor extends AbstractMethodInterceptor
             invocation.proceed()
             return;
         }
-        
+
         final specInstance = invocation.instance
         String testDirName = specInstance.class.simpleName
         setupTestDir(testDirName, specInstance, invocation)

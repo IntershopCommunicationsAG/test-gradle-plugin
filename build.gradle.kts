@@ -30,7 +30,7 @@ plugins {
     idea
 
     // plugin for documentation
-    id("org.asciidoctor.jvm.convert") version "4.0.3"
+    id("org.asciidoctor.jvm.convert") version "4.0.5"
 
     // publish plugin
     `maven-publish`
@@ -59,7 +59,7 @@ java {
     withJavadocJar()
     withSourcesJar()
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
@@ -81,7 +81,7 @@ testing {
                 all {
                     testTask.configure {
                         // Gradle versions for test
-                        systemProperty("intershop.gradle.versions", "8.4,8.5,8.10.2")
+                        systemProperty("intershop.gradle.versions", "8.5,8.10.2,9.0.0")
                         systemProperty("intershop.test.base.dir", project.layout.buildDirectory.dir("test-working").get().asFile.absolutePath)
                         options {
                             testLogging.showStandardStreams = true
@@ -237,15 +237,14 @@ signing {
 }
 
 dependencies {
-    api(platform("org.spockframework:spock-bom:2.3-groovy-3.0"))
+    api(platform("org.spockframework:spock-bom:2.4-M6-groovy-4.0"))
     api("org.spockframework:spock-core") {
         exclude(group = "org.codehaus.groovy")
     }
     api("org.spockframework:spock-junit4")
-    api("commons-io:commons-io:2.17.0")
+    api("commons-io:commons-io:2.20.0")
     api("com.sun.xml.bind:jaxb-impl:4.0.5")
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.2")
-    implementation("junit:junit:4.13.2")
 
     implementation(gradleTestKit())
 }

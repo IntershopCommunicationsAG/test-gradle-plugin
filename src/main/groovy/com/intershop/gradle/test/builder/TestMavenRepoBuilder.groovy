@@ -446,6 +446,6 @@ class TestMavenRepoBuilder extends BuilderSupport {
     }
 
     static String getURL(File repoDir) {
-        "file://${repoDir.absolutePath.replace('\\', '/')}/"
+        repoDir.toURI().toURL()
     }
 }
