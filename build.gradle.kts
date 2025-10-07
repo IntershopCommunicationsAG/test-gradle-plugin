@@ -245,6 +245,7 @@ dependencies {
     api("commons-io:commons-io:2.20.0")
     api("com.sun.xml.bind:jaxb-impl:4.0.5")
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.2")
+    implementation("org.junit.jupiter:junit-jupiter:6.0.0")
 
     implementation(gradleTestKit())
 }

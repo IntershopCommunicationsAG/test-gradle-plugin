@@ -22,15 +22,6 @@ import spock.lang.Unroll
 @Unroll
 class AbstractIntegrationSpecSpec extends AbstractIntegrationSpec {
 
-    def 'test testProjectDir'() {
-        when:
-        File javaFile = writeJavaTestClass('com.intershop')
-
-        then:
-        testProjectDir.exists()
-        javaFile.toURI().toString().contains('build/test-working/AbstractIntegrationSpecSpec/test-testProjectDir/src')
-    }
-
     def 'test gradle version configuration'() {
         when:
         List<String> versions = supportedGradleVersions

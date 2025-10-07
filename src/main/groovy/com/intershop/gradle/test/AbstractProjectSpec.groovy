@@ -15,11 +15,11 @@
  */
 package com.intershop.gradle.test
 
-import com.intershop.gradle.test.util.TestDir
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Rule
+import org.junit.rules.TemporaryFolder
 import org.junit.rules.TestName
 import spock.lang.Specification
 
@@ -31,8 +31,10 @@ abstract class AbstractProjectSpec extends Specification {
     /**
      * Project directory for tests
      */
-    @TestDir
-    File testProjectDir
+    @Rule
+    public TemporaryFolder testProjectDirRule = new TemporaryFolder();
+
+    File testProjectDir;
 
     /**
      * Test name
@@ -61,6 +63,8 @@ abstract class AbstractProjectSpec extends Specification {
      * @return
      */
     def setup() {
+        testProjectDir = testProjectDirRule.newFolder()
+        log.info("Using testProjectDir='{}'", testProjectDir)
         canonicalName = testName.getMethodName().replaceAll(' ', '-')
         project = ProjectBuilder.builder().withName(canonicalName).withProjectDir(testProjectDir).build()
     }
