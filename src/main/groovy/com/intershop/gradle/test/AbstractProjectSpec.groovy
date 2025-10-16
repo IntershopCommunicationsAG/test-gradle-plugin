@@ -15,6 +15,7 @@
  */
 package com.intershop.gradle.test
 
+import groovy.util.logging.Slf4j
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
@@ -26,6 +27,7 @@ import spock.lang.Specification
 /**
  * Create some basic tests that all plugins should pass
  */
+@Slf4j
 abstract class AbstractProjectSpec extends Specification {
 
     /**

@@ -82,7 +82,6 @@ testing {
                     testTask.configure {
                         // Gradle versions for test
                         systemProperty("intershop.gradle.versions", "8.5,8.10.2,9.0.0")
-                        systemProperty("intershop.test.base.dir", project.layout.buildDirectory.dir("test-working").get().asFile.absolutePath)
                         options {
                             testLogging.showStandardStreams = true
                         }
@@ -151,8 +150,7 @@ tasks {
             html.outputLocation.set(project.layout.buildDirectory.dir("jacocoHtml"))
         }
 
-        val jacocoTestReport by tasks
-        jacocoTestReport.dependsOn("test")
+        dependsOn(test)
     }
 
     getByName("jar").dependsOn("asciidoctor")

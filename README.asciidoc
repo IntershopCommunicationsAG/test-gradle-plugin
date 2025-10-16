@@ -1,5 +1,5 @@
 = Gradle Test Plugin
-:latestRevision: 4.1.0
+:latestRevision: 6.0.0
 
 [CAUTION]
 ====
@@ -21,7 +21,7 @@ To use the Gradle Test Plugin, add the following lines to your build script:
     tasks {
         withType<Test>().configureEach {
             //Set supported Gradle version
-            systemProperty("intershop.gradle.versions", "8.4,8.5,8.10.2")
+            systemProperty("intershop.gradle.versions", "8.5,8.10.2,9.10")
             //working dir for tests
             systemProperty("intershop.test.base.dir", project.layout.buildDirectory.get().dir("test-working").asFile.absolutePath)
         }
