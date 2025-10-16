@@ -81,7 +81,7 @@ testing {
                 all {
                     testTask.configure {
                         // Gradle versions for test
-                        systemProperty("intershop.gradle.versions", "8.5,8.10.2,9.0.0")
+                        systemProperty("intershop.gradle.versions", "8.5,8.10.2,9.1.0")
                         options {
                             testLogging.showStandardStreams = true
                         }
