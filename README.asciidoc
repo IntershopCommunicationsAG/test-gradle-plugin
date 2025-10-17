@@ -1,5 +1,5 @@
 = Gradle Test Plugin
-:latestRevision: 4.1.0
+:latestRevision: 6.0.0
 
 [CAUTION]
 ====
@@ -10,7 +10,7 @@ This library requires **Gradle >= 8.4** to work properly.
 
 == Summary
 This library serves some functionality for Gradle plugin builds.
-It contains some helper classes, methods and a Spock extension 'TestDir' for test directories.
+It contains some helper classes and methods.
 
 == Usage
 To use the Gradle Test Plugin, add the following lines to your build script:
@@ -21,7 +21,7 @@ To use the Gradle Test Plugin, add the following lines to your build script:
     tasks {
         withType<Test>().configureEach {
             //Set supported Gradle version
-            systemProperty("intershop.gradle.versions", "8.4,8.5,8.10.2")
+            systemProperty("intershop.gradle.versions", "8.5,8.10.2,9.1.0")
             //working dir for tests
             systemProperty("intershop.test.base.dir", project.layout.buildDirectory.get().dir("test-working").asFile.absolutePath)
         }
@@ -223,25 +223,6 @@ The class provides the following variables:
 |===
 
 This class is a fork from Netflix nebula-test extension.
-
-=== Test Directory Spock Extension @TestDir
-
-Used on a File property of a spec class this annotation will cause a temporary directory to be created and injected for the spec before the first feature method is run.
-The directory will be deleted if exists before it is created again for the spec.
-
-The baseDir is without any special configuration taken from the test system property `'intershop.test.base.dir'`. The default root path is `'build/test-working'`.
-
-[cols="17%,17%,17%,49%", width="95%", options="header"]
-|===
-| Methods | Type | Default Value |
-
-| *baseDir*          | `String`  | ''     | Base dir of the directory
-| *clean*            | `boolean` | `true` | Deletes the directory before test starts
-| *overwrite*        | `boolean` | `false`| If `clean` is `false`, and this value is also `false` the folder will be extended with a number.
-| *useTempDirAsBase* | `boolean` | `false`| Instead of `'intershop.test.base.dir'` the value of `'java.io.tmpdir'` is used for the base dir.
-| *large*            | `boolean` | `false`| If set the test directory is expected to be large and is cleaned using OS commands. +
-*CAUTION*: This does not work for long directories on Windows.
-|===
 
 === Assertions
 

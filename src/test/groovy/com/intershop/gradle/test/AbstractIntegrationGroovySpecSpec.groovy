@@ -33,7 +33,7 @@ class AbstractIntegrationGroovySpecSpec extends AbstractIntegrationGroovySpec {
             apply plugin: 'java'
         """)
 
-        File bFile = new File(pDir, 'build.gradle')
+        File bFile = new File((File)pDir, 'build.gradle')
 
         then:
         settingsFile.exists()
@@ -56,7 +56,7 @@ class AbstractIntegrationGroovySpecSpec extends AbstractIntegrationGroovySpec {
 
         writeJavaTestClass('com.intershop.test')
 
-        File repoDir = new File(testProjectDir, 'build/ivyrepo')
+        File repoDir = new File((File)testProjectDir, 'build/ivyrepo')
 
         buildFile << """
             plugins {
@@ -88,8 +88,8 @@ class AbstractIntegrationGroovySpecSpec extends AbstractIntegrationGroovySpec {
         then:
         result.task(':publish').outcome == SUCCESS
         repoDir.exists()
-        new File(repoDir, 'com.intershop/component/1.0.0/ivy-1.0.0.xml').exists()
-        new File(repoDir, 'com.intershop/component/1.0.0/component-1.0.0.jar').exists()
+        new File((File)repoDir, 'com.intershop/component/1.0.0/ivy-1.0.0.xml').exists()
+        new File((File)repoDir, 'com.intershop/component/1.0.0/component-1.0.0.jar').exists()
 
         where:
         gradleVersion << supportedGradleVersions
@@ -104,7 +104,7 @@ class AbstractIntegrationGroovySpecSpec extends AbstractIntegrationGroovySpec {
 
         writeJavaTestClass('com.intershop.test')
 
-        File repoDir = new File(testProjectDir, 'build/mvnrepo')
+        File repoDir = new File((File)testProjectDir, 'build/mvnrepo')
 
         buildFile << """
             plugins {
@@ -136,8 +136,8 @@ class AbstractIntegrationGroovySpecSpec extends AbstractIntegrationGroovySpec {
         then:
         result.task(':publish').outcome == SUCCESS
         repoDir.exists()
-        new File(repoDir, 'com/intershop/component/1.0.0/component-1.0.0.pom').exists()
-        new File(repoDir, 'com/intershop/component/1.0.0/component-1.0.0.jar').exists()
+        new File((File)repoDir, 'com/intershop/component/1.0.0/component-1.0.0.pom').exists()
+        new File((File)repoDir, 'com/intershop/component/1.0.0/component-1.0.0.jar').exists()
 
         where:
         gradleVersion << supportedGradleVersions

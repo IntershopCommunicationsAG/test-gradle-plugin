@@ -15,10 +15,14 @@
  */
 package com.intershop.gradle.test
 
-import com.intershop.gradle.test.util.TestDir
 import groovy.util.logging.Slf4j
 import org.apache.commons.io.FileUtils
 import org.gradle.testkit.runner.GradleRunner
+import org.junit.Before
+import org.junit.Rule
+import org.junit.jupiter.api.io.TempDir
+import org.junit.rules.TemporaryFolder
+import org.slf4j.ILoggerFactory
 import spock.lang.Specification
 
 /**
@@ -34,8 +38,10 @@ abstract class AbstractIntegrationSpec extends Specification {
     /**
      * Project directory for tests
      */
-    @TestDir
-    File testProjectDir
+    @Rule
+    public TemporaryFolder testProjectDirRule = new TemporaryFolder();
+
+    File testProjectDir;
 
     /**
      * Build file for root test project
@@ -47,6 +53,12 @@ abstract class AbstractIntegrationSpec extends Specification {
      * Settings gradle file of the root test project
      */
     File settingsFile
+
+    @Before
+    void setupTestDir() {
+        testProjectDir = testProjectDirRule.newFolder()
+        log.info("Using testProjectDir='{}'", testProjectDir)
+    }
 
     /**
      * set up simple test project settings gradle
@@ -186,8 +198,8 @@ abstract class AbstractIntegrationSpec extends Specification {
      */
     protected File file(String path, File baseDir = testProjectDir) {
         def splitted = path.split('/')
-        def directory = splitted.size() > 1 ? directory(splitted[0..-2].join('/'), baseDir) : baseDir
-        def file = new File(directory, splitted[-1])
+        File directory = splitted.size() > 1 ? directory(splitted[0..-2].join('/'), baseDir) : baseDir
+        def file = new File((File)directory, splitted[-1])
         file.createNewFile()
         return file
     }
@@ -200,7 +212,7 @@ abstract class AbstractIntegrationSpec extends Specification {
      * @return the file object of the specified path
      */
     protected File directory(String path, File baseDir = testProjectDir) {
-        new File(baseDir, path).with {
+        new File((File)baseDir, path).with {
             mkdirs()
             return it
         }
@@ -220,16 +232,16 @@ abstract class AbstractIntegrationSpec extends Specification {
             throw new RuntimeException("Could not find classpath resource: $srcDir")
         }
 
-        File resourceFile = new File(resource.toURI())
+        File resourceFile = new File((URI)resource.toURI())
         if (resourceFile.file) {
             if(target) {
-                FileUtils.copyFile(resourceFile, new File(baseDir, target))
+                FileUtils.copyFile(resourceFile, new File((File)baseDir, target))
             } else {
                 FileUtils.copyFile(resourceFile, baseDir)
             }
         } else {
             if(target) {
-                FileUtils.copyDirectory(resourceFile, new File(baseDir, target))
+                FileUtils.copyDirectory(resourceFile, new File((File)baseDir, target))
             } else {
                 FileUtils.copyDirectory(resourceFile, baseDir)
             }

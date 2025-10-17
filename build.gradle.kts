@@ -81,8 +81,7 @@ testing {
                 all {
                     testTask.configure {
                         // Gradle versions for test
-                        systemProperty("intershop.gradle.versions", "8.5,8.10.2,9.0.0")
-                        systemProperty("intershop.test.base.dir", project.layout.buildDirectory.dir("test-working").get().asFile.absolutePath)
+                        systemProperty("intershop.gradle.versions", "8.5,8.10.2,9.1.0")
                         options {
                             testLogging.showStandardStreams = true
                         }
@@ -151,8 +150,7 @@ tasks {
             html.outputLocation.set(project.layout.buildDirectory.dir("jacocoHtml"))
         }
 
-        val jacocoTestReport by tasks
-        jacocoTestReport.dependsOn("test")
+        dependsOn(test)
     }
 
     getByName("jar").dependsOn("asciidoctor")
@@ -245,6 +243,7 @@ dependencies {
     api("commons-io:commons-io:2.20.0")
     api("com.sun.xml.bind:jaxb-impl:4.0.5")
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.2")
+    implementation("org.junit.jupiter:junit-jupiter:6.0.0")
 
     implementation(gradleTestKit())
 }
