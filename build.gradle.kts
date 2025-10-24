@@ -59,7 +59,7 @@ java {
     withJavadocJar()
     withSourcesJar()
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
+        languageVersion.set(JavaLanguageVersion.of(17)) // don't change -> will require all dependent plugins to also be changed
     }
 }
 
