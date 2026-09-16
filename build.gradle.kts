@@ -30,6 +30,12 @@ plugins {
     idea
 
     // plugin for documentation
+    // NOTE: 4.0.5 (Aug 2025) is the latest release; its internal 'grolifant' library still calls the
+    // deprecated StartParameter.isConfigurationCacheRequested, which will be removed in Gradle 10.
+    // There is no alternative plugin (the xbib fork is broken on Gradle 9, all other asciidoc
+    // plugins are generators, not renderers). An org.asciidoctor 5.0.0-alpha.1 line exists since
+    // Sep 2025, so a final 5.x is expected to be available by the time Gradle 10 is released -
+    // upgrade to it then.
     id("org.asciidoctor.jvm.convert") version "4.0.5"
 
     // publish plugin
