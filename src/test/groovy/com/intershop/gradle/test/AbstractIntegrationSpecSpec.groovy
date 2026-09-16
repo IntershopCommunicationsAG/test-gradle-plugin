@@ -27,7 +27,7 @@ class AbstractIntegrationSpecSpec extends AbstractIntegrationSpec {
         List<String> versions = supportedGradleVersions
 
         then:
-        versions.size() == 3
+        versions.size() == 4
     }
 
     def 'create hello world file'() {
