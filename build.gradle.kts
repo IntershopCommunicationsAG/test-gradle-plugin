@@ -30,6 +30,12 @@ plugins {
     idea
 
     // plugin for documentation
+    // NOTE: 4.0.5 (Aug 2025) is the latest release; its internal 'grolifant' library still calls the
+    // deprecated StartParameter.isConfigurationCacheRequested, which will be removed in Gradle 10.
+    // There is no alternative plugin (the xbib fork is broken on Gradle 9, all other asciidoc
+    // plugins are generators, not renderers). An org.asciidoctor 5.0.0-alpha.1 line exists since
+    // Sep 2025, so a final 5.x is expected to be available by the time Gradle 10 is released -
+    // upgrade to it then.
     id("org.asciidoctor.jvm.convert") version "4.0.5"
 
     // publish plugin
@@ -44,11 +50,11 @@ plugins {
 group = "com.intershop.gradle.test"
 description = "Gradle test library - test extension for Gradle plugin builds"
 // apply gradle property 'projectVersion' to project.version, default to 'LOCAL'
-val projectVersion : String? by project
+val projectVersion = project.findProperty("projectVersion") as String?
 version = projectVersion ?: "LOCAL"
 
-val sonatypeUsername: String? by project
-val sonatypePassword: String? by project
+val sonatypeUsername = project.findProperty("sonatypeUsername") as String?
+val sonatypePassword = project.findProperty("sonatypePassword") as String?
 
 repositories {
     mavenLocal()
@@ -68,9 +74,27 @@ if (project.version.toString().endsWith("-SNAPSHOT")) {
     status = "snapshot'"
 }
 
+/*
+ * Gradle 9.7.1 bundles Groovy 4.0.32 and 'gradleTestKit()' puts the whole Gradle distribution -
+ * including that bundled groovy jar - on the compile classpath. The Groovy plugin's automatic
+ * groovyClasspath inference therefore picks up Groovy 4, which makes Spock's global AST transform
+ * (spock-bom 2.4-groovy-5.0) abort with IncompatibleGroovyVersionException.
+ *
+ * Fix: use a dedicated, isolated configuration that contains *only* Groovy 5 and use it as the
+ * compiler classpath, so the Groovy compiler and Spock's AST transform both see Groovy 5.
+ */
+val groovyCompiler: Configuration = configurations.create("groovyCompiler") {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+}
+
+tasks.withType<GroovyCompile>().configureEach {
+    groovyClasspath = groovyCompiler
+}
+
 testing {
     suites {
-        val test by getting(JvmTestSuite::class) {
+        getByName<JvmTestSuite>("test") {
             useSpock()
 
             dependencies {
@@ -81,7 +105,7 @@ testing {
                 all {
                     testTask.configure {
                         // Gradle versions for test
-                        systemProperty("intershop.gradle.versions", "8.5,8.10.2,9.1.0")
+                        systemProperty("intershop.gradle.versions", "8.5,8.10.2,9.1.0,9.7.1")
                         options {
                             testLogging.showStandardStreams = true
                         }
@@ -234,16 +258,31 @@ signing {
     sign(publishing.publications["intershopMvn"])
 }
 
+// dependency versions
+val groovyVersion = "5.1.2"
+val spockVersion = "2.4-groovy-5.0"
+
 dependencies {
-    api(platform("org.spockframework:spock-bom:2.4-M6-groovy-4.0"))
-    api("org.spockframework:spock-core") {
-        exclude(group = "org.codehaus.groovy")
-    }
+    api(platform("org.spockframework:spock-bom:$spockVersion"))
+    // groovy-bom aligns all groovy modules on one version - spock-bom would otherwise pull an older
+    // Groovy transitively, which would not match the groovyCompiler classpath below
+    api(platform("org.apache.groovy:groovy-bom:$groovyVersion"))
+    api("org.apache.groovy:groovy")
+    api("org.spockframework:spock-core")
     api("org.spockframework:spock-junit4")
-    api("commons-io:commons-io:2.20.0")
-    api("com.sun.xml.bind:jaxb-impl:4.0.5")
-    implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.2")
-    implementation("org.junit.jupiter:junit-jupiter:6.0.0")
+    api("commons-io:commons-io:2.22.0")
+    api("com.sun.xml.bind:jaxb-impl:4.0.9")
+    implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.5")
+    implementation("org.junit.jupiter:junit-jupiter:6.1.3")
 
     implementation(gradleTestKit())
+
+    // isolated Groovy compiler classpath - see the groovyCompiler configuration above
+    groovyCompiler(platform("org.apache.groovy:groovy-bom:$groovyVersion"))
+    groovyCompiler("org.apache.groovy:groovy")
+    groovyCompiler("org.apache.groovy:groovy-ant")
+    groovyCompiler("org.apache.groovy:groovy-json")
+    groovyCompiler("org.apache.groovy:groovy-xml")
+    groovyCompiler("org.apache.groovy:groovy-templates")
 }
+
